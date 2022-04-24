@@ -66,11 +66,6 @@ public class Interface extends JFrame implements ActionListener, Runnable{
         return display;
     }
 
-
-
-
-
-
     @Override
     public void run() {
 
