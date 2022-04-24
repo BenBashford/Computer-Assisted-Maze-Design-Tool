@@ -39,6 +39,7 @@ public class Interface extends JFrame implements ActionListener, Runnable{
         top.add (imgSelect);
         JMenuItem autoGen = new JMenuItem("Generate Maze");
         JMenuItem manGen = new JMenuItem("Begin Manual Maze Design");
+        manGen.addActionListener(this);
         manual.add(manGen);
         auto.add(autoGen);
 
@@ -57,12 +58,12 @@ public class Interface extends JFrame implements ActionListener, Runnable{
 
 
     private JTextArea txtArea(){
-        JTextArea display = new JTextArea("Hello");
+        JTextArea display = new JTextArea();
         display.setEditable(false);
         display.setLineWrap(true);
         display.setFont(new Font("Arial",Font.BOLD,20));
         display.setBorder(BorderFactory.createEtchedBorder());
-        display.setForeground(Color.WHITE);
+        display.setText("Temp Home Screen");
         return display;
     }
 
@@ -71,8 +72,7 @@ public class Interface extends JFrame implements ActionListener, Runnable{
 
     }
 
-    @Override
     public void actionPerformed(ActionEvent e) {
-
+        areDisplay.setText("Insert Maze Here");
     }
 }
