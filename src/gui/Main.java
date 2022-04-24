@@ -4,6 +4,6 @@ import javax.swing.*;
 
 public class Main {
     public static void main(String[] args){
-        SwingUtilities.invokeLater(new Wiring("BorderLayout"));
+        SwingUtilities.invokeLater(new Interface("BorderLayout"));
     }
 }
