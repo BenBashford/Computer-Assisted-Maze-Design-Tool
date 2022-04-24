@@ -37,7 +37,7 @@ public class Wiring extends JFrame implements ActionListener, Runnable{
         setLayout(new BorderLayout());
 
 
-        pnlDisplay = createPanel(Color.WHITE);
+        pnlDisplay = createPanel(Color.BLACK);
         pnl2 = createPanel(Color.LIGHT_GRAY);
         pnl3 = createPanel(Color.LIGHT_GRAY);
         pnlBtn = createPanel(Color.LIGHT_GRAY);
@@ -70,11 +70,12 @@ public class Wiring extends JFrame implements ActionListener, Runnable{
     }
 
     private JTextArea ayyLmao(){
-        JTextArea display = new JTextArea();
+        JTextArea display = new JTextArea("Hello");
         display.setEditable(false);
         display.setLineWrap(true);
-        display.setFont(new Font("Arial",Font.BOLD,24));
+        display.setFont(new Font("Arial",Font.BOLD,2));
         display.setBorder(BorderFactory.createEtchedBorder());
+        display.setForeground(Color.BLACK);
         return display;
     }
 
