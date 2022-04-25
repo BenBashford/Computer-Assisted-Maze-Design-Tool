@@ -13,6 +13,12 @@ public class Interface extends JFrame implements ActionListener, Runnable{
 
     private JPanel pnlDisplay;
     private JTextArea areDisplay;
+    private JMenu manual;
+    private JMenu auto;
+    private JMenu imgSelect;
+    private JMenuItem autoGen;
+    private JMenuItem manGen;
+
 
 
     public Interface(String title) throws HeadlessException{
@@ -29,16 +35,15 @@ public class Interface extends JFrame implements ActionListener, Runnable{
         areDisplay = txtArea();
         pnlDisplay.setLayout(new BorderLayout());
         pnlDisplay.add(areDisplay);
-
         JMenuBar top = new JMenuBar();
-        JMenu manual = new JMenu("Manual");
-        JMenu auto = new JMenu("Automatic");
-        JMenu imgSelect = new JMenu ("Select Image/s");
+        manual = createJMenu("Manual");
+        auto = createJMenu("Auto");
+        imgSelect = createJMenu("Select Image/s");
         top.add (manual);
         top.add (auto);
         top.add (imgSelect);
-        JMenuItem autoGen = new JMenuItem("Generate Maze");
-        JMenuItem manGen = new JMenuItem("Begin Manual Maze Design");
+        autoGen = createJMenuItem("Generate Maze");
+        manGen = createJMenuItem("Begin Manual Maze Design");
         manGen.addActionListener(this);
         manual.add(manGen);
         auto.add(autoGen);
@@ -67,12 +72,31 @@ public class Interface extends JFrame implements ActionListener, Runnable{
         return display;
     }
 
+    private JMenuItem createJMenuItem(String str){
+        JMenuItem temp = new JMenuItem();
+        temp.setText(str);
+        temp.addActionListener(this);
+        return temp;
+    }
+
+    private JMenu createJMenu(String str){
+        JMenu temp = new JMenu();
+        temp.setText(str);
+        return temp;
+    }
+
     @Override
     public void run() {
 
     }
 
     public void actionPerformed(ActionEvent e) {
-        areDisplay.setText("Insert Maze Here");
+        Object src = e.getSource();
+        if (src == manGen){
+            areDisplay.setEditable(true);
+        }
+        else if (src == autoGen){
+            areDisplay.setEditable(false);
+        }
     }
 }
