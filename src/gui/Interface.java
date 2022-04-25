@@ -48,6 +48,7 @@ public class Interface extends JFrame implements ActionListener, Runnable{
         manual.add(manGen);
         auto.add(autoGen);
 
+
         getContentPane().add(pnlDisplay, BorderLayout.CENTER);
         getContentPane().add(top, BorderLayout.NORTH);
         repaint();
@@ -96,7 +97,22 @@ public class Interface extends JFrame implements ActionListener, Runnable{
             areDisplay.setEditable(true);
         }
         else if (src == autoGen){
-            areDisplay.setEditable(false);
+            JTextField widthField = new JTextField(5);
+            JTextField heightField = new JTextField(5);
+
+            JPanel myPanel = new JPanel();
+            myPanel.add(new JLabel("Width:"));
+            myPanel.add(widthField);
+            myPanel.add(Box.createHorizontalStrut(15)); // a spacer
+            myPanel.add(new JLabel("Height:"));
+            myPanel.add(heightField);
+
+            int result = JOptionPane.showConfirmDialog(null, myPanel,
+                    "Please Enter Width and Height Values", JOptionPane.OK_CANCEL_OPTION);
+            if (result == JOptionPane.OK_OPTION) {
+                System.out.println("Width value: " + widthField.getText());
+                System.out.println("Height value: " + heightField.getText());
+            }
         }
     }
 }
