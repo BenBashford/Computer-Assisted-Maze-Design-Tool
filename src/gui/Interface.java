@@ -12,12 +12,13 @@ public class Interface extends JFrame implements ActionListener, Runnable{
     public static final int HEIGHT = 200;
 
     private JPanel pnlDisplay;
-    private JTextArea areDisplay;
+    private JTextPane areDisplay;
     private JMenu manual;
     private JMenu auto;
     private JMenu imgSelect;
     private JMenuItem autoGen;
     private JMenuItem manGen;
+    private JMenuItem imgAdd;
 
 
 
@@ -31,10 +32,12 @@ public class Interface extends JFrame implements ActionListener, Runnable{
         setSize(WIDTH, HEIGHT);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLayout(new BorderLayout());
+
         pnlDisplay = createPanel(Color.WHITE);
         areDisplay = txtArea();
         pnlDisplay.setLayout(new BorderLayout());
         pnlDisplay.add(areDisplay);
+
         JMenuBar top = new JMenuBar();
         manual = createJMenu("Manual");
         auto = createJMenu("Auto");
@@ -44,10 +47,10 @@ public class Interface extends JFrame implements ActionListener, Runnable{
         top.add (imgSelect);
         autoGen = createJMenuItem("Generate Maze");
         manGen = createJMenuItem("Begin Manual Maze Design");
-        manGen.addActionListener(this);
+        imgAdd = createJMenuItem("Insert Image");
         manual.add(manGen);
         auto.add(autoGen);
-
+        imgSelect.add(imgAdd);
 
         getContentPane().add(pnlDisplay, BorderLayout.CENTER);
         getContentPane().add(top, BorderLayout.NORTH);
@@ -63,10 +66,9 @@ public class Interface extends JFrame implements ActionListener, Runnable{
     }
 
 
-    private JTextArea txtArea(){
-        JTextArea display = new JTextArea();
+    private JTextPane txtArea(){
+        JTextPane display = new JTextPane();
         display.setEditable(false);
-        display.setLineWrap(true);
         display.setFont(new Font("Arial",Font.BOLD,20));
         display.setBorder(BorderFactory.createEtchedBorder());
         display.setText("Temp Home Screen");
@@ -85,6 +87,7 @@ public class Interface extends JFrame implements ActionListener, Runnable{
         temp.setText(str);
         return temp;
     }
+
 
     @Override
     public void run() {
@@ -113,6 +116,13 @@ public class Interface extends JFrame implements ActionListener, Runnable{
                 System.out.println("Width value: " + widthField.getText());
                 System.out.println("Height value: " + heightField.getText());
             }
+        }
+        else if (src == imgAdd){
+            ImageIcon temp = new ImageIcon("src/images/Test Image.png"); // Create image icon
+            Image image = temp.getImage(); // Change into normal image
+            Image newTemp = image.getScaledInstance(120,120, java.awt.Image.SCALE_SMOOTH); // Rescale
+            temp = new ImageIcon(newTemp); // Change back into image icon
+            areDisplay.insertIcon(temp);
         }
     }
 }
