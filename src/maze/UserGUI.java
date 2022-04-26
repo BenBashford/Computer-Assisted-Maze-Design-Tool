@@ -1,12 +1,13 @@
-package gui;
+package maze;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.Objects;
 
 
-public class Interface extends JFrame implements ActionListener, Runnable{
+public class UserGUI extends JFrame implements ActionListener, Runnable{
 
     public static final int WIDTH = 300;
     public static final int HEIGHT = 200;
@@ -20,9 +21,9 @@ public class Interface extends JFrame implements ActionListener, Runnable{
     private JMenuItem manGen;
     private JMenuItem imgAdd;
 
+    private static int size;
 
-
-    public Interface(String title) throws HeadlessException{
+    public UserGUI(String title) throws HeadlessException{
         super(title);
         createGUI();
     }
@@ -71,7 +72,6 @@ public class Interface extends JFrame implements ActionListener, Runnable{
         display.setEditable(false);
         display.setFont(new Font("Arial",Font.BOLD,20));
         display.setBorder(BorderFactory.createEtchedBorder());
-        display.setText("Temp Home Screen");
         return display;
     }
 
@@ -100,21 +100,30 @@ public class Interface extends JFrame implements ActionListener, Runnable{
             areDisplay.setEditable(true);
         }
         else if (src == autoGen){
-            JTextField widthField = new JTextField(5);
-            JTextField heightField = new JTextField(5);
-
             JPanel myPanel = new JPanel();
-            myPanel.add(new JLabel("Width:"));
-            myPanel.add(widthField);
-            myPanel.add(Box.createHorizontalStrut(15)); // a spacer
-            myPanel.add(new JLabel("Height:"));
-            myPanel.add(heightField);
+            myPanel.add(new JLabel("Size:"));
 
-            int result = JOptionPane.showConfirmDialog(null, myPanel,
-                    "Please Enter Width and Height Values", JOptionPane.OK_CANCEL_OPTION);
-            if (result == JOptionPane.OK_OPTION) {
-                System.out.println("Width value: " + widthField.getText());
-                System.out.println("Height value: " + heightField.getText());
+
+            Object[] possibilities = {"Small", "Medium", "Large"};
+            String s = (String)JOptionPane.showInputDialog(
+                    myPanel,
+                    "Please Select a Maze Size:\n",
+                    "Size Selector",
+                    JOptionPane.PLAIN_MESSAGE, null,
+                    possibilities,
+                    "ham");
+            if (Objects.equals(s, "Small")){
+                size = 10;
+            }
+            else if (Objects.equals(s, "Medium")){
+                size = 8;
+            }
+            else if (Objects.equals(s, "Large")){
+                size = 5;
+            }
+
+            if ((s != null)){
+                MazeGUI.open();
             }
         }
         else if (src == imgAdd){
@@ -124,5 +133,13 @@ public class Interface extends JFrame implements ActionListener, Runnable{
             temp = new ImageIcon(newTemp); // Change back into image icon
             areDisplay.insertIcon(temp);
         }
+    }
+
+    public static int returnSize(){
+        return size;
+    }
+
+    public static void main (String[] args){
+        new UserGUI("Test");
     }
 }
