@@ -1,4 +1,4 @@
-package mazeGenSolve;
+package maze;
 
 import java.awt.*;
 import java.util.Stack;

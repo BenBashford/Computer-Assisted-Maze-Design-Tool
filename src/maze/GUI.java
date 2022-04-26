@@ -1,4 +1,4 @@
-package mazeGenSolve;
+package maze;
 
 import java.awt.Color;
 import java.awt.Dimension;
