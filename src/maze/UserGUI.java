@@ -140,6 +140,6 @@ public class UserGUI extends JFrame implements ActionListener, Runnable{
     }
 
     public static void main (String[] args){
-        new UserGUI("UserGUIS");
+        new UserGUI("MazeCo Computer Assisted Maze Design Tool");
     }
 }
