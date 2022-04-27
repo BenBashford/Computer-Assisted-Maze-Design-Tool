@@ -9,8 +9,8 @@ import java.util.Objects;
 
 public class UserGUI extends JFrame implements ActionListener, Runnable{
 
-    public static final int WIDTH = 300;
-    public static final int HEIGHT = 200;
+    private static final int WIDTH = 300;
+    private static final int HEIGHT = 200;
 
     private JPanel pnlDisplay;
     private JTextPane areDisplay;
@@ -140,6 +140,6 @@ public class UserGUI extends JFrame implements ActionListener, Runnable{
     }
 
     public static void main (String[] args){
-        new UserGUI("Test");
+        new UserGUI("UserGUIS");
     }
 }
