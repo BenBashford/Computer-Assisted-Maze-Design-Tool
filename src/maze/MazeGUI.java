@@ -56,7 +56,6 @@ public class MazeGUI extends JPanel {
         JFrame frame = new JFrame("Maze gen v1- backtracer DFS");
         MazeGUI g = new MazeGUI();
 
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setResizable(false);
         frame.add(g);
         frame.pack();
