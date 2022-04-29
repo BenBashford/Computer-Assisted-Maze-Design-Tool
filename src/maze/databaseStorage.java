@@ -5,7 +5,7 @@ public class databaseStorage {
         // Initialise database
     }
 
-    public static void insertMaze(){
+    public static void insertMaze(Object maze){
         // Insert maze into database
     }
 

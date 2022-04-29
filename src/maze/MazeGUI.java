@@ -66,4 +66,5 @@ public class MazeGUI extends JPanel {
         g.repaint();
     }
 
+
 }
