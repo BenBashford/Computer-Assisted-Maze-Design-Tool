@@ -20,9 +20,11 @@ public class UserGUI extends JFrame implements ActionListener, Runnable{
     private JMenu saveOpen;
     private JMenuItem autoGen;
     private JMenuItem manGen;
-    private JMenuItem imgAdd;
+    private JMenuItem iconAdd;
+    private JMenuItem mazeAdd;
     private JMenuItem save;
     private JMenuItem open;
+
 
     private static int size;
 
@@ -53,12 +55,14 @@ public class UserGUI extends JFrame implements ActionListener, Runnable{
         top.add(saveOpen);
         autoGen = createJMenuItem("Generate Maze");
         manGen = createJMenuItem("Begin Manual Maze Design");
-        imgAdd = createJMenuItem("Insert Image");
+        iconAdd = createJMenuItem("Insert Icon");
+        mazeAdd = createJMenuItem("Insert Maze Image");
         save = createJMenuItem("Save");
         open = createJMenuItem("Open");
         manual.add(manGen);
         auto.add(autoGen);
-        imgSelect.add(imgAdd);
+        imgSelect.add(iconAdd);
+        imgSelect.add(mazeAdd);
         saveOpen.add(save);
         saveOpen.add(open);
 
@@ -135,12 +139,18 @@ public class UserGUI extends JFrame implements ActionListener, Runnable{
                 MazeGUI.open();
             }
         }
-        else if (src == imgAdd){
+        else if (src == iconAdd){
+            // TEMPORARY CODE
             ImageIcon temp = new ImageIcon("src/images/Test Image.png"); // Create image icon
             Image image = temp.getImage(); // Change into normal image
             Image newTemp = image.getScaledInstance(120,120, java.awt.Image.SCALE_SMOOTH); // Rescale
             temp = new ImageIcon(newTemp); // Change back into image icon
             areDisplay.insertIcon(temp);
+            // TEMPORARY CODE
+            imageInsert.addImage(0);
+        }
+        else if (src == mazeAdd){
+            imageInsert.addImage(1);
         }
         else if (src == open){
             new databaseGUI("Database");
@@ -165,8 +175,5 @@ public class UserGUI extends JFrame implements ActionListener, Runnable{
         new UserGUI("MazeCo Computer Assisted Maze Design Tool");
     }
 
-    public static int returnImgType(){
-        //Test
-        return 0;
-    }
+
 }

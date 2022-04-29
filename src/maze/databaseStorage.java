@@ -11,5 +11,6 @@ public class databaseStorage {
 
     public static void retrieveMaze(String title, String author, String date, String edited){
         // Called from databaseGUI, retrieves maze
+        // Calls MazeGUI to add selected maze to active screen
     }
 }

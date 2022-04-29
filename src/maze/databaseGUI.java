@@ -31,6 +31,7 @@ public class databaseGUI extends JFrame implements ActionListener, Runnable {
         pnlDisplay.add(savedMazes);
         JMenuBar top = new JMenuBar();
         open = new JButton("Open Selected");
+        open.addActionListener(this);
         searchBar = new JTextField(10);
         searchBar.setActionCommand(searchBarString);
         searchBarLabel = new JLabel(searchBarString + ":");
@@ -54,7 +55,11 @@ public class databaseGUI extends JFrame implements ActionListener, Runnable {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-
+        Object src = e.getSource();
+        if (src == open) {
+            databaseStorage.retrieveMaze("title", "author", "date", "edited");
+            // Replace static strings with readings from selected entry in database
+        }
     }
 
     @Override
