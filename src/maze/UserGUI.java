@@ -17,9 +17,12 @@ public class UserGUI extends JFrame implements ActionListener, Runnable{
     private JMenu manual;
     private JMenu auto;
     private JMenu imgSelect;
+    private JMenu saveOpen;
     private JMenuItem autoGen;
     private JMenuItem manGen;
     private JMenuItem imgAdd;
+    private JMenuItem save;
+    private JMenuItem open;
 
     private static int size;
 
@@ -43,15 +46,21 @@ public class UserGUI extends JFrame implements ActionListener, Runnable{
         manual = createJMenu("Manual");
         auto = createJMenu("Auto");
         imgSelect = createJMenu("Select Image/s");
+        saveOpen = createJMenu("Save/Open");
         top.add (manual);
         top.add (auto);
         top.add (imgSelect);
+        top.add(saveOpen);
         autoGen = createJMenuItem("Generate Maze");
         manGen = createJMenuItem("Begin Manual Maze Design");
         imgAdd = createJMenuItem("Insert Image");
+        save = createJMenuItem("Save");
+        open = createJMenuItem("Open");
         manual.add(manGen);
         auto.add(autoGen);
         imgSelect.add(imgAdd);
+        saveOpen.add(save);
+        saveOpen.add(open);
 
         getContentPane().add(pnlDisplay, BorderLayout.CENTER);
         getContentPane().add(top, BorderLayout.NORTH);
@@ -133,6 +142,19 @@ public class UserGUI extends JFrame implements ActionListener, Runnable{
             temp = new ImageIcon(newTemp); // Change back into image icon
             areDisplay.insertIcon(temp);
         }
+        else if (src == open){
+            new databaseGUI("Database");
+        }
+        else if (src == save){
+            JPanel myPanel = new JPanel();
+            myPanel.add(new JLabel("Save Current Maze?"));
+
+            int result = JOptionPane.showConfirmDialog(
+                    null, myPanel, "Save Current Maze?", JOptionPane.OK_CANCEL_OPTION);
+            if (result == JOptionPane.OK_OPTION){
+                // Link to databaseStorage here
+            }
+        }
     }
 
     public static int returnSize(){
@@ -141,5 +163,10 @@ public class UserGUI extends JFrame implements ActionListener, Runnable{
 
     public static void main (String[] args){
         new UserGUI("MazeCo Computer Assisted Maze Design Tool");
+    }
+
+    public static int returnImgType(){
+        //Test
+        return 0;
     }
 }

@@ -1,13 +1,13 @@
 package maze;
 
-import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.Graphics;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 
-import javax.swing.JFrame;
-import javax.swing.JPanel;
+
+import javax.swing.*;
 
 public class MazeGUI extends JPanel {
 
@@ -28,7 +28,6 @@ public class MazeGUI extends JPanel {
         this.setPreferredSize(new Dimension(WIDTH, HEIGHT));
         this.setMaximumSize(new Dimension(WIDTH, HEIGHT));
         this.setMinimumSize(new Dimension(WIDTH, HEIGHT));
-
         this.setFocusable(true);
 
         this.addKeyListener(new KeyAdapter() {
@@ -40,6 +39,7 @@ public class MazeGUI extends JPanel {
             }
         });
     }
+
 
     private void init() {
         maze = new genAndSolve(WIDTH, HEIGHT, UserGUI.returnSize());
