@@ -4,7 +4,10 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.util.Objects;
+
 
 
 public class UserGUI extends JFrame implements ActionListener, Runnable{
@@ -24,8 +27,6 @@ public class UserGUI extends JFrame implements ActionListener, Runnable{
     private JMenuItem mazeAdd;
     private JMenuItem save;
     private JMenuItem open;
-
-
     private static int size;
 
     public UserGUI(String title) throws HeadlessException{
@@ -42,7 +43,7 @@ public class UserGUI extends JFrame implements ActionListener, Runnable{
         pnlDisplay = createPanel(Color.WHITE);
         areDisplay = txtArea();
         pnlDisplay.setLayout(new BorderLayout());
-        pnlDisplay.add(areDisplay);
+//        pnlDisplay.add(areDisplay);
 
         JMenuBar top = new JMenuBar();
         manual = createJMenu("Manual");
@@ -69,6 +70,7 @@ public class UserGUI extends JFrame implements ActionListener, Runnable{
         getContentPane().add(pnlDisplay, BorderLayout.CENTER);
         getContentPane().add(top, BorderLayout.NORTH);
         repaint();
+        setLocationRelativeTo(null);
         setVisible(true);
 
 
@@ -136,18 +138,24 @@ public class UserGUI extends JFrame implements ActionListener, Runnable{
             }
 
             if ((s != null)){
-                MazeGUI.open();
+                final Rectangle[] r = {pnlDisplay.getBounds()};
+                final Maze[] g = {new Maze(r[0].width, r[0].height)};
+                pnlDisplay.add(g[0]);
+                setVisible(true);
+                this.addKeyListener(new KeyAdapter() {
+                    @Override
+                    public void keyPressed(KeyEvent e) {
+                        int code = e.getKeyCode();
+                        if (code == KeyEvent.VK_SPACE) {
+                            r[0] = pnlDisplay.getBounds(); g[0] = new Maze(r[0].width, r[0].height); }
+                        repaint();
+                    }
+                });
+
             }
         }
         else if (src == iconAdd){
-            // TEMPORARY CODE
-            ImageIcon temp = new ImageIcon("src/images/Test Image.png"); // Create image icon
-            Image image = temp.getImage(); // Change into normal image
-            Image newTemp = image.getScaledInstance(120,120, java.awt.Image.SCALE_SMOOTH); // Rescale
-            temp = new ImageIcon(newTemp); // Change back into image icon
-            areDisplay.insertIcon(temp);
-            // TEMPORARY CODE
-            imageInsert.addImage(0);
+            areDisplay.insertIcon(imageInsert.addImage(0));
         }
         else if (src == mazeAdd){
             imageInsert.addImage(1);

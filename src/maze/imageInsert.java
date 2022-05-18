@@ -1,16 +1,29 @@
 package maze;
 
 import javax.swing.*;
+import javax.swing.filechooser.FileNameExtensionFilter;
+import java.io.File;
 
 // THIS CLASS IS TO BE ADDED: EXISTING CODE IS ONLY A ROUGH FRAMEWORK
 public class imageInsert {
     private static String imgLogo;
 
-    public static void addImage(int imgType) {
+    public static ImageIcon addImage(int imgType) {
         imgLogo = imgSelect();
         try {
             if (imgType == 0) {
-                // Add image as logo
+                JFileChooser file = new JFileChooser();
+                file.setCurrentDirectory(new File(System.getProperty("user.home")));
+                //filtering files
+                FileNameExtensionFilter filter = new FileNameExtensionFilter("*.Images","jpg","png");
+                file.addChoosableFileFilter(filter);
+                int res = file.showSaveDialog(null);
+                //if the user clicks on save in Jfilechooser
+                if(res == JFileChooser.APPROVE_OPTION){
+                    File selFile = file.getSelectedFile();
+                    String path = selFile.getAbsolutePath();
+                    return (new ImageIcon(path));
+                }
                 logoAdd();
             }
             else if (imgType == 1) {
@@ -21,6 +34,7 @@ public class imageInsert {
         catch(Exception e){
             // Error message
         }
+        return null;
     }
 
     public static void logoAdd(){
