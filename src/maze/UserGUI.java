@@ -43,7 +43,7 @@ public class UserGUI extends JFrame implements ActionListener, Runnable{
         pnlDisplay = createPanel(Color.WHITE);
         areDisplay = txtArea();
         pnlDisplay.setLayout(new BorderLayout());
-//        pnlDisplay.add(areDisplay);
+//        pnlDisplay.add(areDisplay); This only exists to test insering images, areDisplay will be deleted once images can be added to the Maze directly
 
         JMenuBar top = new JMenuBar();
         manual = createJMenu("Manual");
