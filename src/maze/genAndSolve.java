@@ -1,12 +1,10 @@
 package maze;
 
-import java.awt.*;
 import java.util.Stack;
 
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Point;
-import java.util.Stack;
 
 public class genAndSolve {
     private int rows, columns, cellSize;
@@ -15,8 +13,11 @@ public class genAndSolve {
         WALL,
         PATH,
         PLACEHOLDER,
-        SOLUTION
+        SOLUTION,
+        IMAGE,
     }
+
+    public int imgSize = 0;
 
     // main data structure
     private state[][] maze;
@@ -27,7 +28,6 @@ public class genAndSolve {
 
     public genAndSolve(int width, int height, int size) {
         size = Math.abs(size);
-
         columns = Math.abs(width) / size;
         rows = Math.abs(height) / size;
 
@@ -51,28 +51,33 @@ public class genAndSolve {
         // the options of cells
         Point[] options = { new Point(current.x, current.y + dist), new Point(current.x, current.y - dist),
                 new Point(current.x + dist, current.y), new Point(current.x - dist, current.y) };
+        Point[] testOptions = { new Point(current.x, current.y + dist/2), new Point(current.x, current.y - dist/2),
+                new Point(current.x + dist/2, current.y), new Point(current.x - dist/2, current.y) };
 
         boolean[] goodIndices = new boolean[n]; // the options
         int nGood = 0; // number of good
 
         for (int i = 0; i < n; i++) {
             Point c = options[i];
+            Point t = testOptions[i];
 
-            boolean good = c.x >= 0 && c.x < columns && c.y >= 0 && c.y < rows && maze[c.x][c.y] == target;
-            goodIndices[i] = good;
+            boolean good = (c.x >= 0) && (c.x < columns) && (c.y >= 0) && (c.y < rows) && (maze[c.x][c.y] == target);
+            boolean test = (c.x >= 0) && (c.x < columns) && (c.y >= 0) && (c.y < rows) && (maze[t.x][t.y] != state.IMAGE);
+            if (test) {
+                goodIndices[i] = good;
+                if (good)
+                    nGood++;
+            }
 
-            if (good)
-                nGood++;
         }
-
         if (nGood == 0)
             return null; // if there are no neighbors
+
 
         int rand = (int) (Math.random() * n);
         while (!goodIndices[rand]) {
             rand = (int) (Math.random() * n);
         }
-
         return options[rand]; // return the random neighbor
 
     }
@@ -105,35 +110,46 @@ public class genAndSolve {
                 maze[i][j] = state.WALL;
             }
         }
+        // Temporary code for example purposes, need to restructure input system to make placement and sizing modular
+        // To keep the walls around the image when generated, have sizing be 1x1, 3x3, and 9x9, with the replaced PLACEHOLDER (both odd) states as the corners
+        maze[columns-2][1] = state.IMAGE;
+        maze[columns-3][1] = state.IMAGE;
+        maze[columns-4][1] = state.IMAGE;
+        maze[columns-2][2] = state.IMAGE;
+        maze[columns-3][2] = state.IMAGE;
+        maze[columns-4][2] = state.IMAGE;
+        maze[columns-2][3] = state.IMAGE;
+        maze[columns-3][3] = state.IMAGE;
+        maze[columns-4][3] = state.IMAGE;
+        imgSize = 4; // Number of PLACEHOLDER states replaced with IMAGE states
+
     }
 
     private void generate() {
         Point current, next;
         Stack<Point> history = new Stack<Point>();
 
-        int nToVisit = (columns - 1) * (rows - 1) / 4;
+        int nToVisit = ((columns - 1) * (rows - 1) / 4) - imgSize ;
         int nVisited = 1;
 
         current = new Point(start.x + 1, start.y);
         maze[current.x][current.y] = state.PATH;
 
         while (nVisited < nToVisit) {
-
             next = checkNext(current, state.PLACEHOLDER, 2);
+                if (next != null) {
+                    int x = (current.x + next.x) / 2;
+                    int y = (current.y + next.y) / 2;
+                    maze[x][y] = state.PATH;
 
-            if (next != null) {
-                int x = (current.x + next.x) / 2;
-                int y = (current.y + next.y) / 2;
-                maze[x][y] = state.PATH;
+                    history.push(current);
+                    current = next;
+                    maze[current.x][current.y] = state.PATH;
 
-                history.push(current);
-                current = next;
-                maze[current.x][current.y] = state.PATH;
-
-                nVisited++;
-            } else if (!history.empty()) {
-                current = history.pop();
-            }
+                    nVisited++;
+                } else if (!history.empty()) {
+                    current = history.pop();
+                }
         }
     }
 
@@ -177,6 +193,9 @@ public class genAndSolve {
                         break;
                     case SOLUTION:
                         colour = Color.BLUE;
+                        break;
+                    case IMAGE:
+                        colour = Color.PINK;
                         break;
                     default:
                         colour = Color.BLACK;

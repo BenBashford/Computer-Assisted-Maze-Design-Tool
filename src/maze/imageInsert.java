@@ -39,7 +39,7 @@ public class imageInsert {
                     // This needs to add to the Maze rather than just displaying in a JTextArea, which is temporary and for testing. I don't know how to exclude a section of cells from the maze generation code, but that would need to be done before the image can be added.
                     return (new ImageIcon(outputImage));
                 }
-                logoAdd();
+
             }
             else if (imgType == 1) {
                 // Add image as maze element
