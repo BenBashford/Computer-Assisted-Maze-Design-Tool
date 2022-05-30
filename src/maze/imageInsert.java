@@ -36,7 +36,7 @@ public class imageInsert {
                     g2d.drawImage(inputImage, 0, 0, scaledWidth, scaledHeight, null);
                     g2d.dispose();
 
-                    // This needs to add to the Maze rather than just displaying in a JTextArea, which is temporary and for testing. I don't know how to exclude a section of cells from the maze generation code, but that would need to be done before the image can be added.
+                    // This needs to add to the Maze rather than just displaying in a JTextArea,
                     return (new ImageIcon(outputImage));
                 }
 

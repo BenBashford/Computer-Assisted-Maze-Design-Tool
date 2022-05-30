@@ -16,7 +16,6 @@ public class UserGUI extends JFrame implements ActionListener, Runnable{
     private static final int HEIGHT = 200;
 
     private JPanel pnlDisplay;
-    private JTextPane areDisplay;
     private JMenu manual;
     private JMenu auto;
     private JMenu imgSelect;
@@ -41,9 +40,7 @@ public class UserGUI extends JFrame implements ActionListener, Runnable{
         setLayout(new BorderLayout());
 
         pnlDisplay = createPanel(Color.WHITE);
-        areDisplay = txtArea();
         pnlDisplay.setLayout(new BorderLayout());
-//        pnlDisplay.add(areDisplay); This only exists to test insering images, areDisplay will be deleted once images can be added to the Maze directly
 
         JMenuBar top = new JMenuBar();
         manual = createJMenu("Manual");
@@ -112,7 +109,7 @@ public class UserGUI extends JFrame implements ActionListener, Runnable{
     public void actionPerformed(ActionEvent e) {
         Object src = e.getSource();
         if (src == manGen){
-            areDisplay.setEditable(true);
+            // Insert Manual Generation Code Here
         }
         else if (src == autoGen){
             JPanel myPanel = new JPanel();
@@ -155,7 +152,7 @@ public class UserGUI extends JFrame implements ActionListener, Runnable{
             }
         }
         else if (src == iconAdd){
-            areDisplay.insertIcon(imageInsert.addImage(0));
+           genAndSolve.icon = (imageInsert.addImage(0));
         }
         else if (src == mazeAdd){
             imageInsert.addImage(1);

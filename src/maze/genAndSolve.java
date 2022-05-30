@@ -1,10 +1,12 @@
 package maze;
 
+import javax.imageio.ImageIO;
+import javax.swing.*;
+import java.awt.*;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
 import java.util.Stack;
-
-import java.awt.Color;
-import java.awt.Graphics;
-import java.awt.Point;
 
 public class genAndSolve {
     private int rows, columns, cellSize;
@@ -16,6 +18,8 @@ public class genAndSolve {
         SOLUTION,
         IMAGE,
     }
+
+    public static ImageIcon icon = null;
 
     public int imgSize = 0;
 
@@ -112,15 +116,15 @@ public class genAndSolve {
         }
         // Temporary code for example purposes, need to restructure input system to make placement and sizing modular
         // To keep the walls around the image when generated, have sizing be 1x1, 3x3, and 9x9, with the replaced PLACEHOLDER (both odd) states as the corners
-        maze[columns-2][1] = state.IMAGE;
-        maze[columns-3][1] = state.IMAGE;
-        maze[columns-4][1] = state.IMAGE;
-        maze[columns-2][2] = state.IMAGE;
-        maze[columns-3][2] = state.IMAGE;
-        maze[columns-4][2] = state.IMAGE;
-        maze[columns-2][3] = state.IMAGE;
-        maze[columns-3][3] = state.IMAGE;
-        maze[columns-4][3] = state.IMAGE;
+        maze[columns-6][1] = state.IMAGE;
+        maze[columns-7][1] = state.IMAGE;
+        maze[columns-8][1] = state.IMAGE;
+        maze[columns-6][2] = state.IMAGE;
+        maze[columns-7][2] = state.IMAGE;
+        maze[columns-8][2] = state.IMAGE;
+        maze[columns-6][3] = state.IMAGE;
+        maze[columns-7][3] = state.IMAGE;
+        maze[columns-8][3] = state.IMAGE;
         imgSize = 4; // Number of PLACEHOLDER states replaced with IMAGE states
 
     }
@@ -179,7 +183,7 @@ public class genAndSolve {
         for (int i = 0; i < columns; i++) {
             for (int j = 0; j < rows; j++) {
                 state state_g = maze[i][j];
-                Color colour;
+                Color colour = null;
 
                 int x = i * cellSize;
                 int y = j * cellSize;
@@ -194,9 +198,6 @@ public class genAndSolve {
                     case SOLUTION:
                         colour = Color.BLUE;
                         break;
-                    case IMAGE:
-                        colour = Color.PINK;
-                        break;
                     default:
                         colour = Color.BLACK;
                         break;
@@ -206,6 +207,12 @@ public class genAndSolve {
                     colour = Color.GREEN;
                 } else if (i == end.x && j == end.y) {
                     colour = Color.RED;
+                }
+                else if (i == columns-2 && j == 1){
+                    if (icon != null) {
+                        Image image = icon.getImage();
+                        g.drawImage(image, (columns - 8) * cellSize, cellSize * 1, cellSize * 3, cellSize * 3, null); // Replace measurements with variables depending on result from random placement
+                    }
                 }
 
                 g.setColor(colour);
