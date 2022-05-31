@@ -29,7 +29,8 @@ public class genAndSolve {
 
     public static ImageIcon logo;
 
-    public static ImageIcon mazeImage;
+    public static ImageIcon mazeStartImage;
+    public static ImageIcon mazeEndImage;
 
     public int imgSize = 0;
 
@@ -53,10 +54,10 @@ public class genAndSolve {
         start = new Point(0, 1);
         end = new Point(columns - 1, rows - 2);
 
-        xLowerBound = (5);
-        xUpperBound = (columns-9);
-        yLowerBound = (5);
-        yUpperBound = (rows-9);
+        xLowerBound = (3);
+        xUpperBound = (columns-7);
+        yLowerBound = (3);
+        yUpperBound = (rows-7);
         randomX = xLowerBound + 2*(int)(Math.random()*((xUpperBound-xLowerBound)/2+1));
         randomY = yLowerBound + 2*(int)(Math.random()*((yUpperBound-yLowerBound)/2+1));
 
@@ -235,20 +236,33 @@ public class genAndSolve {
                 }
 
                 if (i == start.x && j == start.y) {
-                    colour = Color.GREEN;
-                } else if (i == end.x && j == end.y) {
-                    colour = Color.RED;
-                }
-                else if (i == columns-2 && j == 1){
-                    if (logo != null) {
-                        Image image = logo.getImage();
-                        int n = imageInsert.logoSize;
-                        g.drawImage(image, randomX * cellSize, cellSize * randomY, cellSize * n, cellSize * n, null); // Replace measurements with variables depending on result from random placement
+                    if (mazeStartImage == null){
+                        colour = Color.GREEN;
                     }
+                } else if (i == end.x && j == end.y) {
+                    if (mazeEndImage == null){
+                        colour = Color.RED;
+                    }
+
+                }
+                if (logo != null) {
+                    Image image = logo.getImage();
+                    int n = imageInsert.logoSize;
+                    g.drawImage(image, randomX * cellSize, cellSize * randomY, cellSize * n, cellSize * n, null); // Replace measurements with variables depending on result from random placement
                 }
 
                 g.setColor(colour);
                 g.fillRect(x, y, cellSize, cellSize);
+
+                if (mazeStartImage != null) {
+                    Image image = mazeStartImage.getImage();
+                    g.drawImage(image, start.x*cellSize, start.y*cellSize, cellSize, cellSize, null );
+                }
+                if (mazeEndImage != null) {
+                    Image image = mazeEndImage.getImage();
+                    g.drawImage(image, end.x * cellSize, end.y * cellSize, cellSize, cellSize, null);
+                }
+
 
             }
         }

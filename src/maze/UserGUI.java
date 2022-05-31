@@ -12,8 +12,8 @@ import java.util.Objects;
 
 public class UserGUI extends JFrame implements ActionListener, Runnable{
 
-    private static final int WIDTH = 300;
-    private static final int HEIGHT = 220;
+    private static final int WIDTH = 1200;
+    private static final int HEIGHT = 800;
 
     public static boolean isLogo = false;
 
@@ -129,13 +129,13 @@ public class UserGUI extends JFrame implements ActionListener, Runnable{
                     possibilities,
                     "ham");
             if (Objects.equals(s, "Small")){
-                size = 10;
+                size = 40;
             }
             else if (Objects.equals(s, "Medium")){
-                size = 8;
+                size = 32;
             }
             else if (Objects.equals(s, "Large")){
-                size = 5;
+                size = 20;
             }
 
             if ((s != null)){
@@ -160,8 +160,7 @@ public class UserGUI extends JFrame implements ActionListener, Runnable{
            genAndSolve.logo = (imageInsert.addImage(0));
         }
         else if (src == mazeAdd){
-//            isMazeImage = true; !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! TO DO ADD START/END IMAGES
-            genAndSolve.mazeImage = (imageInsert.addImage(1));
+            imageInsert.addImage(1);
         }
         else if (src == open){
             new databaseGUI("Database");
