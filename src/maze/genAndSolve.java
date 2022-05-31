@@ -7,9 +7,17 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.util.Stack;
+import java.util.Random;
 
 public class genAndSolve {
     private int rows, columns, cellSize;
+
+    private int randomX;
+    private int randomY;
+    private int xLowerBound;
+    private int xUpperBound;
+    private int yLowerBound;
+    private int yUpperBound;
 
     private enum state {
         WALL,
@@ -19,7 +27,9 @@ public class genAndSolve {
         IMAGE,
     }
 
-    public static ImageIcon icon = null;
+    public static ImageIcon logo;
+
+    public static ImageIcon mazeImage;
 
     public int imgSize = 0;
 
@@ -42,6 +52,13 @@ public class genAndSolve {
 
         start = new Point(0, 1);
         end = new Point(columns - 1, rows - 2);
+
+        xLowerBound = (5);
+        xUpperBound = (columns-9);
+        yLowerBound = (5);
+        yUpperBound = (rows-9);
+        randomX = xLowerBound + 2*(int)(Math.random()*((xUpperBound-xLowerBound)/2+1));
+        randomY = yLowerBound + 2*(int)(Math.random()*((yUpperBound-yLowerBound)/2+1));
 
         configure();
         generate();
@@ -114,18 +131,32 @@ public class genAndSolve {
                 maze[i][j] = state.WALL;
             }
         }
-        // Temporary code for example purposes, need to restructure input system to make placement and sizing modular
-        // To keep the walls around the image when generated, have sizing be 1x1, 3x3, and 9x9, with the replaced PLACEHOLDER (both odd) states as the corners
-        maze[columns-6][1] = state.IMAGE;
-        maze[columns-7][1] = state.IMAGE;
-        maze[columns-8][1] = state.IMAGE;
-        maze[columns-6][2] = state.IMAGE;
-        maze[columns-7][2] = state.IMAGE;
-        maze[columns-8][2] = state.IMAGE;
-        maze[columns-6][3] = state.IMAGE;
-        maze[columns-7][3] = state.IMAGE;
-        maze[columns-8][3] = state.IMAGE;
-        imgSize = 4; // Number of PLACEHOLDER states replaced with IMAGE states
+
+       if (UserGUI.isLogo) {
+           if (imageInsert.logoSize == 1) {
+               maze[randomX][randomY] = state.IMAGE;
+               imgSize = 1; // Number of PLACEHOLDER states replaced with IMAGE states
+           }
+           else if (imageInsert.logoSize == 3){
+               int x,y;
+               for (x = 0; x < 3; x++) {
+                   for (y = 0; y < 3; y++) {
+                       maze[randomX+x][randomY+y] = state.IMAGE;
+                   }
+               }
+
+               imgSize = 4;
+           }
+           else if (imageInsert.logoSize == 5){
+               int x,y;
+               for (x = 0; x < 5; x++) {
+                   for (y = 0; y < 5; y++) {
+                       maze[randomX+x][randomY+y] = state.IMAGE;
+                   }
+               }
+               imgSize = 9;
+           }
+       }
 
     }
 
@@ -183,7 +214,7 @@ public class genAndSolve {
         for (int i = 0; i < columns; i++) {
             for (int j = 0; j < rows; j++) {
                 state state_g = maze[i][j];
-                Color colour = null;
+                Color colour;
 
                 int x = i * cellSize;
                 int y = j * cellSize;
@@ -209,9 +240,10 @@ public class genAndSolve {
                     colour = Color.RED;
                 }
                 else if (i == columns-2 && j == 1){
-                    if (icon != null) {
-                        Image image = icon.getImage();
-                        g.drawImage(image, (columns - 8) * cellSize, cellSize * 1, cellSize * 3, cellSize * 3, null); // Replace measurements with variables depending on result from random placement
+                    if (logo != null) {
+                        Image image = logo.getImage();
+                        int n = imageInsert.logoSize;
+                        g.drawImage(image, randomX * cellSize, cellSize * randomY, cellSize * n, cellSize * n, null); // Replace measurements with variables depending on result from random placement
                     }
                 }
 

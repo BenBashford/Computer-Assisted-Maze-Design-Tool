@@ -13,7 +13,10 @@ import java.util.Objects;
 public class UserGUI extends JFrame implements ActionListener, Runnable{
 
     private static final int WIDTH = 300;
-    private static final int HEIGHT = 200;
+    private static final int HEIGHT = 220;
+
+    public static boolean isLogo = false;
+
 
     private JPanel pnlDisplay;
     private JMenu manual;
@@ -22,7 +25,7 @@ public class UserGUI extends JFrame implements ActionListener, Runnable{
     private JMenu saveOpen;
     private JMenuItem autoGen;
     private JMenuItem manGen;
-    private JMenuItem iconAdd;
+    private JMenuItem logoAdd;
     private JMenuItem mazeAdd;
     private JMenuItem save;
     private JMenuItem open;
@@ -36,6 +39,7 @@ public class UserGUI extends JFrame implements ActionListener, Runnable{
     public void createGUI(){
 
         setSize(WIDTH, HEIGHT);
+        setMinimumSize(new Dimension(WIDTH, HEIGHT));
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLayout(new BorderLayout());
 
@@ -53,13 +57,13 @@ public class UserGUI extends JFrame implements ActionListener, Runnable{
         top.add(saveOpen);
         autoGen = createJMenuItem("Generate Maze");
         manGen = createJMenuItem("Begin Manual Maze Design");
-        iconAdd = createJMenuItem("Insert Icon");
+        logoAdd = createJMenuItem("Insert Logo");
         mazeAdd = createJMenuItem("Insert Maze Image");
         save = createJMenuItem("Save");
         open = createJMenuItem("Open");
         manual.add(manGen);
         auto.add(autoGen);
-        imgSelect.add(iconAdd);
+        imgSelect.add(logoAdd);
         imgSelect.add(mazeAdd);
         saveOpen.add(save);
         saveOpen.add(open);
@@ -151,11 +155,13 @@ public class UserGUI extends JFrame implements ActionListener, Runnable{
 
             }
         }
-        else if (src == iconAdd){
-           genAndSolve.icon = (imageInsert.addImage(0));
+        else if (src == logoAdd){
+            isLogo = true;
+           genAndSolve.logo = (imageInsert.addImage(0));
         }
         else if (src == mazeAdd){
-            imageInsert.addImage(1);
+//            isMazeImage = true; !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! TO DO ADD START/END IMAGES
+            genAndSolve.mazeImage = (imageInsert.addImage(1));
         }
         else if (src == open){
             new databaseGUI("Database");
