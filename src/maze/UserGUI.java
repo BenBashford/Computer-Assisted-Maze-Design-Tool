@@ -6,17 +6,20 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Objects;
 
 
 
 public class UserGUI extends JFrame implements ActionListener, Runnable{
 
-    private static final int WIDTH = 1200;
-    private static final int HEIGHT = 800;
+    private static final int WIDTH = 800;
+    private static final int HEIGHT = 600;
 
     public static boolean isLogo = false;
 
+    public Maze currentMaze;
 
     private JPanel pnlDisplay;
     private JMenu manual;
@@ -31,13 +34,13 @@ public class UserGUI extends JFrame implements ActionListener, Runnable{
     private JMenuItem open;
     private static int size;
 
-    public UserGUI(String title) throws HeadlessException{
+    public UserGUI(String title) throws HeadlessException, IOException {
         super(title);
         createGUI();
     }
 
-    public void createGUI(){
-
+    public void createGUI() throws IOException {
+        databaseStorage.create();
         setSize(WIDTH, HEIGHT);
         setMinimumSize(new Dimension(WIDTH, HEIGHT));
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -83,14 +86,6 @@ public class UserGUI extends JFrame implements ActionListener, Runnable{
     }
 
 
-    private JTextPane txtArea(){
-        JTextPane display = new JTextPane();
-        display.setEditable(false);
-        display.setFont(new Font("Arial",Font.BOLD,20));
-        display.setBorder(BorderFactory.createEtchedBorder());
-        return display;
-    }
-
     private JMenuItem createJMenuItem(String str){
         JMenuItem temp = new JMenuItem();
         temp.setText(str);
@@ -128,11 +123,13 @@ public class UserGUI extends JFrame implements ActionListener, Runnable{
                     JOptionPane.PLAIN_MESSAGE, null,
                     possibilities,
                     "ham");
+
+            // These sizes are arbitrary, if you find a way to make it so the overall maze dimensions don't change when changing maze size please do so.
             if (Objects.equals(s, "Small")){
                 size = 40;
             }
             else if (Objects.equals(s, "Medium")){
-                size = 32;
+                size = 30;
             }
             else if (Objects.equals(s, "Large")){
                 size = 20;
@@ -141,14 +138,18 @@ public class UserGUI extends JFrame implements ActionListener, Runnable{
             if ((s != null)){
                 final Rectangle[] r = {pnlDisplay.getBounds()};
                 final Maze[] g = {new Maze(r[0].width, r[0].height)};
-                pnlDisplay.add(g[0]);
+                pnlDisplay.add(g[0], BorderLayout.CENTER);
                 setVisible(true);
+                currentMaze = g[0];
                 this.addKeyListener(new KeyAdapter() {
                     @Override
                     public void keyPressed(KeyEvent e) {
                         int code = e.getKeyCode();
                         if (code == KeyEvent.VK_SPACE) {
-                            r[0] = pnlDisplay.getBounds(); g[0] = new Maze(r[0].width, r[0].height); }
+                            r[0] = pnlDisplay.getBounds();
+                            g[0] = new Maze(r[0].width, r[0].height);
+                            currentMaze = g[0];
+                        }
                         repaint();
                     }
                 });
@@ -167,12 +168,18 @@ public class UserGUI extends JFrame implements ActionListener, Runnable{
         }
         else if (src == save){
             JPanel myPanel = new JPanel();
-            myPanel.add(new JLabel("Save Current Maze?"));
+            JTextField title = new JTextField(8);
+            JTextField author = new JTextField(8);
 
+            myPanel.add(new JLabel("Maze Title"));
+            myPanel.add(title, BorderLayout.NORTH);
+            myPanel.add(new JLabel("Author Name"));
+            myPanel.add(author, BorderLayout.SOUTH);
             int result = JOptionPane.showConfirmDialog(
                     null, myPanel, "Save Current Maze?", JOptionPane.OK_CANCEL_OPTION);
             if (result == JOptionPane.OK_OPTION){
-                // Link to databaseStorage here
+                databaseStorage.insertMaze(currentMaze, title.getText(), author.getText());
+
             }
         }
     }
@@ -181,7 +188,7 @@ public class UserGUI extends JFrame implements ActionListener, Runnable{
         return size;
     }
 
-    public static void main (String[] args){
+    public static void main (String[] args) throws IOException {
         new UserGUI("MazeCo Computer Assisted Maze Design Tool");
     }
 

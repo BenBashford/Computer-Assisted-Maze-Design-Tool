@@ -1,40 +1,46 @@
 package maze;
 
 import javax.swing.*;
+import javax.swing.table.TableModel;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
+import java.util.Arrays;
+import javax.swing.table.DefaultTableModel;
 
 public class databaseGUI extends JFrame implements ActionListener, Runnable {
 
     private static final int WIDTH = 300;
     private static final int HEIGHT = 200;
-    private String[] columnsNames = {"Maze Title", "Author Name", "Date Created", "Last Edit"};
-    private Object[][] data = {
-            {"Example Maze", "Ben", "29/04/2022", "29/04/2022"}
+    private final String[] columnsNames = {"Maze Title", "Author Name", "Date Created", "Last Edit"};
+    private String[][] info = databaseStorage.retrieveMaze();
+    private String[][] data = {
+            {"Example Maze", "Ben", "29/04/2022", "29/04/2022"},
+            {"Example Maze", "Ben", "29/04/2022", "29/04/2022"},
     };
-    private JTable savedMazes;
 
-    private JPanel pnlDisplay;
-    private JTextField searchBar;
-    private JLabel searchBarLabel;
-    private JButton open;
+
+
+
     protected static final String searchBarString = "Searchbar";
 
 
     public void createGUI() {
-
+        DefaultTableModel model = new DefaultTableModel(info, columnsNames);
         setSize(WIDTH, HEIGHT);
-        savedMazes = new JTable(data, columnsNames);
-        pnlDisplay = createPanel(Color.WHITE);
+        System.out.println(Arrays.deepToString(info));
+        System.out.println(Arrays.deepToString(data));
+        JTable savedMazes = new JTable(model);
+        JPanel pnlDisplay = createPanel(Color.WHITE);
         pnlDisplay.setLayout(new BorderLayout());
         pnlDisplay.add(savedMazes);
         JMenuBar top = new JMenuBar();
-        open = new JButton("Open Selected");
+        JButton open = new JButton("Open Selected");
         open.addActionListener(this);
-        searchBar = new JTextField(10);
+        JTextField searchBar = new JTextField(10);
         searchBar.setActionCommand(searchBarString);
-        searchBarLabel = new JLabel(searchBarString + ":");
+        JLabel searchBarLabel = new JLabel(searchBarString + ":");
         searchBarLabel.setLabelFor(searchBar);
         top.add(searchBarLabel);
         top.add(searchBar);
@@ -55,11 +61,11 @@ public class databaseGUI extends JFrame implements ActionListener, Runnable {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        Object src = e.getSource();
-        if (src == open) {
-            databaseStorage.retrieveMaze("title", "author", "date", "edited");
-            // Replace static strings with readings from selected entry in database
-        }
+//        Object src = e.getSource();
+//        if (src == open) {
+//            databaseStorage.retrieveMaze("title", "author", "date", "edited");
+//            // Replace static strings with readings from selected entry in database
+//        }
     }
 
     @Override

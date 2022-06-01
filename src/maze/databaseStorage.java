@@ -1,16 +1,115 @@
 package maze;
 
+
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.sql.*;
+import java.util.ArrayList;
+import java.util.Properties;
+
+
 public class databaseStorage {
-    public static void createDataBase(){
-        // Initialise database
+    private static String url;
+    private static String username;
+    private static String password;
+    private static String schema;
+
+    public static void createNewDatabase(String fileName) throws IOException {
+        Properties props = new Properties();
+        FileInputStream in = null;
+        in = new FileInputStream("src/db.props");
+        props.load(in);
+        url = props.getProperty("jdbc.url");
+        username = props.getProperty("jdbc.username");
+        password = props.getProperty("jdbc.password");
+        schema = props.getProperty("jdbc.schema");
+
+        try (Connection conn = DriverManager.getConnection(url)) {
+            if (conn != null) {
+                DatabaseMetaData meta = conn.getMetaData();
+                System.out.println("The driver name is " + meta.getDriverName());
+                System.out.println("A new database has been created.");
+            }
+
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
     }
 
-    public static void insertMaze(Object maze){
+    public static void create() throws IOException {
+        createNewDatabase(schema);
+        String sql = "CREATE TABLE IF NOT EXISTS Mazes (\n"
+                + "	Title text PRIMARY KEY,\n"
+                + "	Author text,\n"
+                + "	Created CURRENT_TIME,\n"
+                + "	Edited CURRENT_TIME,\n"
+                + "	capacity real\n"
+                + ");";
+        try (Connection conn = DriverManager.getConnection(url);
+             Statement stmt = conn.createStatement()) {
+            // create a new table
+            stmt.execute(sql);
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
+    public static void insertMaze(Object maze, String title, String author){
+        Connection conn = null;
+        try {
+            conn = DriverManager.getConnection(url);
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+        String sql = "INSERT INTO Mazes(title,author) VALUES(?,?)";
+
+        try (
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setString(1, title);
+            pstmt.setString(2, author);
+            pstmt.executeUpdate();
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
         // Insert maze into database
     }
 
-    public static void retrieveMaze(String title, String author, String date, String edited){
+    public static String[][] retrieveMaze(){
+        int n = 0;
+        Connection conn = null;
+        ArrayList<ArrayList<String>> data = new ArrayList();
+        try {
+            conn = DriverManager.getConnection(url);
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+        String sql = "SELECT title, author, created, edited FROM Mazes";
+
+        try (
+             Statement stmt  = conn.createStatement();
+             ResultSet rs    = stmt.executeQuery(sql)){
+
+            // loop through the result set
+            while (rs.next()) {
+                ArrayList<String> a = new ArrayList<>();
+                a.add(rs.getString("title"));
+                a.add(rs.getString("author"));
+                a.add(rs.getString("created"));
+                a.add(rs.getString("edited"));
+                data.add(a);
+                n++;
+
+            }
+
+
+        }
+        catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+        String[][] stringArray = data.stream().map(u -> u.toArray(new String[0])).toArray(String[][]::new);
+        return stringArray;
         // Called from databaseGUI, retrieves maze
         // Calls MazeGUI to add selected maze to active screen
     }
+
 }

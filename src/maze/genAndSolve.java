@@ -45,12 +45,9 @@ public class genAndSolve {
         size = Math.abs(size);
         columns = Math.abs(width) / size;
         rows = Math.abs(height) / size;
-
         columns = columns - 1 + columns % 2;
         rows = rows - 1 + rows % 2;
-
         cellSize = size;
-
         start = new Point(0, 1);
         end = new Point(columns - 1, rows - 2);
 

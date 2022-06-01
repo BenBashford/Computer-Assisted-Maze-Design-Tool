@@ -38,6 +38,7 @@ public class Maze extends JPanel {
 
     @Override
     public void paint(Graphics g) {
+        super.paintComponent(g);
         g.setColor(Color.LIGHT_GRAY);
         g.fillRect(0,0, 400, 400);
         maze.draw(g);
