@@ -1,13 +1,15 @@
 package maze;
 
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
-import java.io.IOException;
-import java.util.ArrayList;
+import java.awt.image.BufferedImage;
+import java.io.*;
+import java.sql.SQLException;
 import java.util.Objects;
 
 
@@ -18,6 +20,7 @@ public class UserGUI extends JFrame implements ActionListener, Runnable{
     private static final int HEIGHT = 600;
 
     public static boolean isLogo = false;
+
 
     public Maze currentMaze;
 
@@ -178,15 +181,40 @@ public class UserGUI extends JFrame implements ActionListener, Runnable{
             int result = JOptionPane.showConfirmDialog(
                     null, myPanel, "Save Current Maze?", JOptionPane.OK_CANCEL_OPTION);
             if (result == JOptionPane.OK_OPTION){
-                databaseStorage.insertMaze(currentMaze, title.getText(), author.getText());
+
+
+                    createImage(title.getText());
+                try {
+                    databaseStorage.insertMaze(title.getText(), author.getText());
+                } catch (SQLException | FileNotFoundException ex) {
+                    ex.printStackTrace();
+                }
 
             }
         }
     }
 
+    public void  createImage(String title) {
+        BufferedImage bi = new BufferedImage(pnlDisplay.getWidth(), pnlDisplay.getHeight(), BufferedImage.TYPE_INT_ARGB);
+        Graphics2D g2d = bi.createGraphics();
+        currentMaze.paintAll(g2d);
+        g2d.dispose();
+        try
+        {
+            ImageIO.write ( bi, "png", new File ( "src/images/"+title+".png" ) );
+        }
+        catch ( IOException e )
+        {
+            e.printStackTrace ();
+        }
+
+    }
+
     public static int returnSize(){
         return size;
     }
+
+
 
     public static void main (String[] args) throws IOException {
         new UserGUI("MazeCo Computer Assisted Maze Design Tool");

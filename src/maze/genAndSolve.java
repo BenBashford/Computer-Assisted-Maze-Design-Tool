@@ -259,8 +259,6 @@ public class genAndSolve {
                     Image image = mazeEndImage.getImage();
                     g.drawImage(image, end.x * cellSize, end.y * cellSize, cellSize, cellSize, null);
                 }
-
-
             }
         }
     }

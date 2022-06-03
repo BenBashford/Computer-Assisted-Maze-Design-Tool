@@ -1,8 +1,7 @@
 package maze;
 
 
-import java.io.FileInputStream;
-import java.io.IOException;
+import java.io.*;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.Properties;
@@ -41,8 +40,9 @@ public class databaseStorage {
         String sql = "CREATE TABLE IF NOT EXISTS Mazes (\n"
                 + "	Title text PRIMARY KEY,\n"
                 + "	Author text,\n"
-                + "	Created CURRENT_TIME,\n"
-                + "	Edited CURRENT_TIME,\n"
+                + "	Created text,\n"
+                + "	Edited text,\n"
+                + "	Image blob NOT NULL,\n"
                 + "	capacity real\n"
                 + ");";
         try (Connection conn = DriverManager.getConnection(url);
@@ -54,20 +54,23 @@ public class databaseStorage {
         }
     }
 
-    public static void insertMaze(Object maze, String title, String author){
+    public static void insertMaze(String title, String author) throws SQLException, FileNotFoundException {
+        File image = new File("src/images/"+title+".png");
+        FileInputStream inputStream = new FileInputStream(image);
         Connection conn = null;
         try {
             conn = DriverManager.getConnection(url);
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
-        String sql = "INSERT INTO Mazes(title,author) VALUES(?,?)";
-
-        try (
-             PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            pstmt.setString(1, title);
-            pstmt.setString(2, author);
-            pstmt.executeUpdate();
+        try {
+            assert conn != null;
+            try (PreparedStatement pstmt = conn.prepareStatement("INSERT INTO Mazes (title,author,created,edited,image) VALUES(?,?,datetime('now', 'localtime'),datetime('now', 'localtime'),?)")) {
+                pstmt.setString(1, title);
+                pstmt.setString(2, author);
+                pstmt.setBinaryStream(3,  inputStream, (int)(image.length()));
+                pstmt.executeUpdate();
+            }
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
@@ -83,7 +86,7 @@ public class databaseStorage {
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
-        String sql = "SELECT title, author, created, edited FROM Mazes";
+        String sql = "SELECT title, author, created, edited, image FROM Mazes";
 
         try (
              Statement stmt  = conn.createStatement();
@@ -96,9 +99,9 @@ public class databaseStorage {
                 a.add(rs.getString("author"));
                 a.add(rs.getString("created"));
                 a.add(rs.getString("edited"));
+                a.add(rs.getString("image")); // This is broken and will be removed along with the code in databaseGUI that manages the 5th invisible column. Must create seccond table in database, add both the image and maze name and use maze name as a key to identify
                 data.add(a);
                 n++;
-
             }
 
 
@@ -111,5 +114,6 @@ public class databaseStorage {
         // Called from databaseGUI, retrieves maze
         // Calls MazeGUI to add selected maze to active screen
     }
+
 
 }

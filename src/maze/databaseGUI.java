@@ -1,6 +1,8 @@
 package maze;
 
 import javax.swing.*;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 import javax.swing.table.TableModel;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -11,14 +13,13 @@ import javax.swing.table.DefaultTableModel;
 
 public class databaseGUI extends JFrame implements ActionListener, Runnable {
 
-    private static final int WIDTH = 300;
-    private static final int HEIGHT = 200;
-    private final String[] columnsNames = {"Maze Title", "Author Name", "Date Created", "Last Edit"};
+    private static final int WIDTH = 600;
+    private static final int HEIGHT = 400;
+    private final String[] columnsNames = {"Maze Title", "Author Name", "Date Created", "Last Edit", "Maze"};
     private String[][] info = databaseStorage.retrieveMaze();
-    private String[][] data = {
-            {"Example Maze", "Ben", "29/04/2022", "29/04/2022"},
-            {"Example Maze", "Ben", "29/04/2022", "29/04/2022"},
-    };
+
+
+    public Object selectedMaze;
 
 
 
@@ -27,11 +28,29 @@ public class databaseGUI extends JFrame implements ActionListener, Runnable {
 
 
     public void createGUI() {
-        DefaultTableModel model = new DefaultTableModel(info, columnsNames);
+        DefaultTableModel model = new DefaultTableModel(info, columnsNames){
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                //Stops table rows from being editable
+                return false;
+            }
+        };
         setSize(WIDTH, HEIGHT);
-        System.out.println(Arrays.deepToString(info));
-        System.out.println(Arrays.deepToString(data));
         JTable savedMazes = new JTable(model);
+        savedMazes.getColumnModel().getColumn(4).setMinWidth(0);
+        savedMazes.getColumnModel().getColumn(4).setMaxWidth(0);
+        savedMazes.getColumnModel().getColumn(4).setWidth(0);
+        savedMazes.setCellSelectionEnabled(false);
+        savedMazes.setRowSelectionAllowed(true);
+        ListSelectionModel select = savedMazes.getSelectionModel();
+        select.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        select.addListSelectionListener(e -> {
+            if (!e.getValueIsAdjusting()) {
+                int[] row = savedMazes.getSelectedRows();
+                TableModel tm = savedMazes.getModel();
+                selectedMaze = tm.getValueAt(row[0], 4);
+            }
+        });
         JPanel pnlDisplay = createPanel(Color.WHITE);
         pnlDisplay.setLayout(new BorderLayout());
         pnlDisplay.add(savedMazes);
@@ -61,11 +80,8 @@ public class databaseGUI extends JFrame implements ActionListener, Runnable {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-//        Object src = e.getSource();
-//        if (src == open) {
-//            databaseStorage.retrieveMaze("title", "author", "date", "edited");
-//            // Replace static strings with readings from selected entry in database
-//        }
+        System.out.println(selectedMaze);
+
     }
 
     @Override

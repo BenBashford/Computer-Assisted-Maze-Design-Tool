@@ -22,25 +22,12 @@ public class imageInsert {
             int res = file.showSaveDialog(null);
             //if the user clicks on save in Jfilechooser
             if (res == JFileChooser.APPROVE_OPTION) {
-                // Some of the below code may be unnecessary, refactor !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
                 File selFile = file.getSelectedFile();
                 String path = selFile.getAbsolutePath();
                 BufferedImage inputImage = ImageIO.read(new File(path));
-//                int scaledWidth = 100;
-//                int scaledHeight = 100;
-//                BufferedImage outputImage = new BufferedImage(scaledWidth,
-//                        scaledHeight, inputImage.getType());
-//
-//                // scales the input image to the output image
-//                Graphics2D g2d = outputImage.createGraphics();
-//                g2d.drawImage(inputImage, 0, 0, scaledWidth, scaledHeight, null);
-//                g2d.dispose();
                 if (imgType == 0) {
-                    // This needs to add to the Maze rather than just displaying in a JTextArea,
                     JPanel myPanel = new JPanel();
                     myPanel.add(new JLabel("Size:"));
-
-
                     Object[] possibilities = {"1x1", "3x3", "5x5"};
                     String s = (String) JOptionPane.showInputDialog(
                             myPanel,
