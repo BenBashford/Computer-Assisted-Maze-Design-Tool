@@ -9,6 +9,8 @@ import java.io.File;
 import java.util.Objects;
 
 // THIS CLASS IS TO BE ADDED: EXISTING CODE IS ONLY A ROUGH FRAMEWORK
+
+//                          REFORMAT CODE INTO SEVERAL BLOCKS FOR READABILITY !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 public class imageInsert {
     public static int logoSize;
     public static String position;

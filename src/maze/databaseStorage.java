@@ -1,6 +1,8 @@
 package maze;
 
 
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
 import java.io.*;
 import java.sql.*;
 import java.util.ArrayList;
@@ -12,6 +14,8 @@ public class databaseStorage {
     private static String username;
     private static String password;
     private static String schema;
+
+    public static InputStream tempStorage;
 
     public static void createNewDatabase(String fileName) throws IOException {
         Properties props = new Properties();
@@ -55,7 +59,7 @@ public class databaseStorage {
     }
 
     public static void insertMaze(String title, String author) throws SQLException, FileNotFoundException {
-        File image = new File("src/images/"+title+".png");
+        File image = new File("src/images/onSave/"+title+".png");
         FileInputStream inputStream = new FileInputStream(image);
         Connection conn = null;
         try {
@@ -94,6 +98,9 @@ public class databaseStorage {
 
             // loop through the result set
             while (rs.next()) {
+                tempStorage = rs.getBinaryStream("image");
+                BufferedImage newImage = ImageIO.read(tempStorage);
+                ImageIO.write(newImage, "png", new File("src/images/retrieved/"+rs.getString("title")+".png"));
                 ArrayList<String> a = new ArrayList<>();
                 a.add(rs.getString("title"));
                 a.add(rs.getString("author"));
@@ -108,6 +115,8 @@ public class databaseStorage {
         }
         catch (SQLException e) {
             System.out.println(e.getMessage());
+        } catch (IOException e) {
+            e.printStackTrace();
         }
         String[][] stringArray = data.stream().map(u -> u.toArray(new String[0])).toArray(String[][]::new);
         return stringArray;

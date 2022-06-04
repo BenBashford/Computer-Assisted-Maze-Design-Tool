@@ -21,10 +21,9 @@ public class UserGUI extends JFrame implements ActionListener, Runnable{
 
     public static boolean isLogo = false;
 
-
     public Maze currentMaze;
 
-    private JPanel pnlDisplay;
+    public static JPanel pnlDisplay;
     private JMenu manual;
     private JMenu auto;
     private JMenu imgSelect;
@@ -141,6 +140,7 @@ public class UserGUI extends JFrame implements ActionListener, Runnable{
             if ((s != null)){
                 final Rectangle[] r = {pnlDisplay.getBounds()};
                 final Maze[] g = {new Maze(r[0].width, r[0].height)};
+                pnlDisplay.removeAll();
                 pnlDisplay.add(g[0], BorderLayout.CENTER);
                 setVisible(true);
                 currentMaze = g[0];
@@ -168,6 +168,7 @@ public class UserGUI extends JFrame implements ActionListener, Runnable{
         }
         else if (src == open){
             new databaseGUI("Database");
+
         }
         else if (src == save){
             JPanel myPanel = new JPanel();
@@ -181,8 +182,6 @@ public class UserGUI extends JFrame implements ActionListener, Runnable{
             int result = JOptionPane.showConfirmDialog(
                     null, myPanel, "Save Current Maze?", JOptionPane.OK_CANCEL_OPTION);
             if (result == JOptionPane.OK_OPTION){
-
-
                     createImage(title.getText());
                 try {
                     databaseStorage.insertMaze(title.getText(), author.getText());
@@ -194,6 +193,7 @@ public class UserGUI extends JFrame implements ActionListener, Runnable{
         }
     }
 
+
     public void  createImage(String title) {
         BufferedImage bi = new BufferedImage(pnlDisplay.getWidth(), pnlDisplay.getHeight(), BufferedImage.TYPE_INT_ARGB);
         Graphics2D g2d = bi.createGraphics();
@@ -201,7 +201,7 @@ public class UserGUI extends JFrame implements ActionListener, Runnable{
         g2d.dispose();
         try
         {
-            ImageIO.write ( bi, "png", new File ( "src/images/"+title+".png" ) );
+            ImageIO.write ( bi, "png", new File ( "src/images/onSave/"+title+".png" ) );
         }
         catch ( IOException e )
         {

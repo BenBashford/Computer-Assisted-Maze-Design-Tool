@@ -1,5 +1,6 @@
 package maze;
 
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
@@ -7,6 +8,9 @@ import javax.swing.table.TableModel;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import javax.swing.table.DefaultTableModel;
@@ -19,9 +23,7 @@ public class databaseGUI extends JFrame implements ActionListener, Runnable {
     private String[][] info = databaseStorage.retrieveMaze();
 
 
-    public Object selectedMaze;
-
-
+    public String selectedMaze;
 
 
     protected static final String searchBarString = "Searchbar";
@@ -48,7 +50,7 @@ public class databaseGUI extends JFrame implements ActionListener, Runnable {
             if (!e.getValueIsAdjusting()) {
                 int[] row = savedMazes.getSelectedRows();
                 TableModel tm = savedMazes.getModel();
-                selectedMaze = tm.getValueAt(row[0], 4);
+                selectedMaze = (String) tm.getValueAt(row[0], 0);
             }
         });
         JPanel pnlDisplay = createPanel(Color.WHITE);
@@ -80,14 +82,26 @@ public class databaseGUI extends JFrame implements ActionListener, Runnable {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        System.out.println(selectedMaze);
-
+        BufferedImage inputImage = null;
+        try {
+            inputImage = ImageIO.read(new File("src/images/retrieved/"+selectedMaze+".png"));
+        } catch (IOException ex) {
+            ex.printStackTrace();
+        }
+        UserGUI.pnlDisplay.removeAll();
+        UserGUI.pnlDisplay.add(new JLabel(new ImageIcon(inputImage)
+        ));
+        UserGUI.pnlDisplay.revalidate();
+        UserGUI.pnlDisplay.repaint();
     }
 
     @Override
     public void run() {
 
     }
+
+
+
 
 
     public databaseGUI(String title) throws HeadlessException{
