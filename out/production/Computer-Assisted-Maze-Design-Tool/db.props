@@ -1,4 +1,0 @@
-jdbc.url=jdbc:sqlite:MazeCo.db
-jdbc.schema=MazeCo
-jdbc.username=username
-jdbc.password=password
