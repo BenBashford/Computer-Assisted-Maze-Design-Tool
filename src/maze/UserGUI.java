@@ -152,6 +152,7 @@ public class UserGUI extends JFrame implements ActionListener, Runnable{
                             r[0] = pnlDisplay.getBounds();
                             g[0] = new Maze(r[0].width, r[0].height);
                             currentMaze = g[0];
+                            pnlDisplay.add(g[0], BorderLayout.CENTER);
                         }
                         repaint();
                     }
