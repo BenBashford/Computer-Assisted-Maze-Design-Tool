@@ -12,6 +12,8 @@ import java.io.*;
 import java.sql.SQLException;
 import java.util.Objects;
 
+import static java.awt.Color.blue;
+import static java.awt.Color.red;
 
 
 public class UserGUI extends JFrame implements ActionListener, Runnable{
@@ -34,6 +36,7 @@ public class UserGUI extends JFrame implements ActionListener, Runnable{
     private JMenuItem mazeAdd;
     private JMenuItem save;
     private JMenuItem open;
+    private JToggleButton mazeSolutions;
     private static int size;
 
     public UserGUI(String title) throws HeadlessException, IOException {
@@ -56,10 +59,12 @@ public class UserGUI extends JFrame implements ActionListener, Runnable{
         auto = createJMenu("Auto");
         imgSelect = createJMenu("Select Image/s");
         saveOpen = createJMenu("Save/Open");
+        mazeSolutions = createToggleButton("Display Solution");
         top.add (manual);
         top.add (auto);
         top.add (imgSelect);
         top.add(saveOpen);
+        top.add(mazeSolutions);
         autoGen = createJMenuItem("Generate Maze");
         manGen = createJMenuItem("Begin Manual Maze Design");
         logoAdd = createJMenuItem("Insert Logo");
@@ -87,6 +92,13 @@ public class UserGUI extends JFrame implements ActionListener, Runnable{
         return temp;
     }
 
+    private JToggleButton createToggleButton(String str){
+        JToggleButton temp = new JToggleButton();
+        temp.setFocusable(false);
+        temp.setText(str);
+        temp.addActionListener(this);
+        return temp;
+    }
 
     private JMenuItem createJMenuItem(String str){
         JMenuItem temp = new JMenuItem();
@@ -106,6 +118,8 @@ public class UserGUI extends JFrame implements ActionListener, Runnable{
     public void run() {
 
     }
+
+
 
     public void actionPerformed(ActionEvent e) {
         Object src = e.getSource();
@@ -191,6 +205,9 @@ public class UserGUI extends JFrame implements ActionListener, Runnable{
                 }
 
             }
+        }
+        else if (src == mazeSolutions){
+            genAndSolve.genSolutions = !genAndSolve.genSolutions;
         }
     }
 

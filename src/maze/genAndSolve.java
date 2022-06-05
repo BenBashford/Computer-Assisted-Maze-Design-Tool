@@ -10,6 +10,7 @@ import java.util.Stack;
 import java.util.Random;
 
 public class genAndSolve {
+    public static boolean genSolutions;
     private int rows, columns, cellSize;
 
     private int randomX;
@@ -60,7 +61,9 @@ public class genAndSolve {
 
         configure();
         generate();
+        if (genSolutions) {
         solve();
+        }
     }
 
     private Point checkNext(Point current, state target, int dist) {
