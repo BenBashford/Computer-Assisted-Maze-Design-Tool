@@ -4,16 +4,15 @@ import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import java.awt.*;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.util.Objects;
 
-// THIS CLASS IS TO BE ADDED: EXISTING CODE IS ONLY A ROUGH FRAMEWORK
 
-//                          REFORMAT CODE INTO SEVERAL BLOCKS FOR READABILITY !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 public class imageInsert {
     public static int logoSize;
-    public static String position;
     public static ImageIcon addImage(int imgType) {
         try {
             JFileChooser file = new JFileChooser();
@@ -26,6 +25,7 @@ public class imageInsert {
             if (res == JFileChooser.APPROVE_OPTION) {
                 File selFile = file.getSelectedFile();
                 String path = selFile.getAbsolutePath();
+
                 BufferedImage inputImage = ImageIO.read(new File(path));
                 if (imgType == 0) {
                     JPanel myPanel = new JPanel();
@@ -78,20 +78,28 @@ public class imageInsert {
         return null;
     }
 
-    public static void logoAdd(){
-        // This calls genAndSolve
-    }
+    public static void removeImage() {
+        JPanel myPanel = new JPanel();
+        myPanel.add(new JLabel("Image Remover:"));
 
-    public static void mazeAdd(){
-        // This calls genAndSolve
-    }
 
-    public static String imgSelect(){
-        // This opens a gui element to select an image from files
-        // str tempSrc = GUI output
-        // ImageIcon temp = new ImageIcon(tempSrc);
-        // return temp;
-        return null;
-    }
+        Object[] possibilities = {"Start", "End", "Logo"};
+        String s = (String) JOptionPane.showInputDialog(
+                myPanel,
+                "Please Select Image to Remove:\n",
+                "Image Remover",
+                JOptionPane.PLAIN_MESSAGE, null,
+                possibilities,
+                "ham");
 
+        // These sizes are arbitrary, if you find a way to make it so the overall maze dimensions don't change when changing maze size please do so.
+        if (Objects.equals(s, "Start")) {
+            genAndSolve.mazeStartImage = null;
+        } else if (Objects.equals(s, "End")) {
+            genAndSolve.mazeEndImage = null;
+        } else if (Objects.equals(s, "Logo")) {
+            genAndSolve.logo = null;
+            UserGUI.isLogo = false;
+        }
+    }
 }

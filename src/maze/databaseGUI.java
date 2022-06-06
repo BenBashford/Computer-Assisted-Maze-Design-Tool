@@ -79,6 +79,7 @@ public class databaseGUI extends JFrame implements ActionListener, Runnable {
             ex.printStackTrace();
         }
         UserGUI.pnlDisplay.removeAll();
+        assert inputImage != null;
         UserGUI.pnlDisplay.add(new JLabel(new ImageIcon(inputImage)
         ));
         UserGUI.pnlDisplay.revalidate();

@@ -3,11 +3,10 @@ package maze;
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
+import java.awt.event.*;
 import java.awt.image.BufferedImage;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.io.*;
 import java.sql.SQLException;
 import java.util.Objects;
@@ -34,6 +33,7 @@ public class UserGUI extends JFrame implements ActionListener, Runnable{
     private JMenuItem manGen;
     private JMenuItem logoAdd;
     private JMenuItem mazeAdd;
+    private JMenuItem imageRemove;
     private JMenuItem save;
     private JMenuItem open;
     private JToggleButton mazeSolutions;
@@ -69,12 +69,14 @@ public class UserGUI extends JFrame implements ActionListener, Runnable{
         manGen = createJMenuItem("Begin Manual Maze Design");
         logoAdd = createJMenuItem("Insert Logo");
         mazeAdd = createJMenuItem("Insert Maze Image");
+        imageRemove = createJMenuItem("Remove Current Image/s");
         save = createJMenuItem("Save");
         open = createJMenuItem("Open");
         manual.add(manGen);
         auto.add(autoGen);
         imgSelect.add(logoAdd);
         imgSelect.add(mazeAdd);
+        imgSelect.add(imageRemove);
         saveOpen.add(save);
         saveOpen.add(open);
 
@@ -181,15 +183,18 @@ public class UserGUI extends JFrame implements ActionListener, Runnable{
         else if (src == mazeAdd){
             imageInsert.addImage(1);
         }
+        else if (src == imageRemove){
+            imageInsert.removeImage();
+        }
         else if (src == open){
             new databaseGUI("Database");
 
         }
         else if (src == save){
+
             JPanel myPanel = new JPanel();
             JTextField title = new JTextField(8);
             JTextField author = new JTextField(8);
-
             myPanel.add(new JLabel("Maze Title"));
             myPanel.add(title, BorderLayout.NORTH);
             myPanel.add(new JLabel("Author Name"));
@@ -197,13 +202,33 @@ public class UserGUI extends JFrame implements ActionListener, Runnable{
             int result = JOptionPane.showConfirmDialog(
                     null, myPanel, "Save Current Maze?", JOptionPane.OK_CANCEL_OPTION);
             if (result == JOptionPane.OK_OPTION){
+                if (title.getText().length() > 0 && author.getText().length() > 0 && !databaseStorage.retrieveTitles().contains(title.getText())) {
                     createImage(title.getText());
-                try {
-                    databaseStorage.insertMaze(title.getText(), author.getText());
-                } catch (SQLException | FileNotFoundException ex) {
-                    ex.printStackTrace();
+                    try {
+                        databaseStorage.insertMaze(title.getText(), author.getText());
+                    } catch (SQLException | FileNotFoundException ex) {
+                        ex.printStackTrace();
+                    }
                 }
-
+                else if (this.currentMaze == null){
+                    JOptionPane.showMessageDialog(null, "No currently generated maze", "Error", JOptionPane.INFORMATION_MESSAGE);
+                }
+                else if (databaseStorage.retrieveTitles().contains(title.getText())){
+                    JOptionPane.showMessageDialog(null, "Title already used in database", "Error", JOptionPane.INFORMATION_MESSAGE);
+                }
+                else{
+                    String errMsg;
+                    if (title.getText().length() == 0 && author.getText().length() > 0){
+                        errMsg = "Title";
+                    }
+                    else if (author.getText().length() == 0 && title.getText().length() > 0){
+                        errMsg = "Author";
+                    }
+                    else{
+                        errMsg = "Title & Author";
+                    }
+                    JOptionPane.showMessageDialog(null, "Invalid " + errMsg, "Error", JOptionPane.INFORMATION_MESSAGE);
+                }
             }
         }
         else if (src == mazeSolutions){

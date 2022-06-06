@@ -82,7 +82,6 @@ public class databaseStorage {
     }
 
     public static String[][] retrieveMaze(){
-        int n = 0;
         Connection conn = null;
         ArrayList<ArrayList<String>> data = new ArrayList();
         try {
@@ -106,9 +105,7 @@ public class databaseStorage {
                 a.add(rs.getString("author"));
                 a.add(rs.getString("created"));
                 a.add(rs.getString("edited"));
-                a.add(rs.getString("image")); // This is broken and will be removed along with the code in databaseGUI that manages the 5th invisible column. Must create seccond table in database, add both the image and maze name and use maze name as a key to identify
                 data.add(a);
-                n++;
             }
 
 
@@ -124,5 +121,27 @@ public class databaseStorage {
         // Calls MazeGUI to add selected maze to active screen
     }
 
+    public static ArrayList<String> retrieveTitles() {
+        Connection conn = null;
+        try {
+            conn = DriverManager.getConnection(url);
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+        String sql = "SELECT title FROM Mazes";
+        ArrayList data = new ArrayList();
+        try (
+                Statement stmt = conn.createStatement();
+                ResultSet rs = stmt.executeQuery(sql)) {
 
+            // loop through the result set
+            while (rs.next()) {
+                data.add(rs.getString("title"));
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return data;
+    }
 }

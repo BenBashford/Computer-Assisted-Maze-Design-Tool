@@ -28,10 +28,11 @@ public class genAndSolve {
         IMAGE,
     }
 
-    public static ImageIcon logo;
+
 
     public static ImageIcon mazeStartImage;
     public static ImageIcon mazeEndImage;
+    public static ImageIcon logo;
 
     public int imgSize = 0;
 
@@ -222,8 +223,6 @@ public class genAndSolve {
 
                 switch (state_g) {
                     case PLACEHOLDER:
-                        colour = Color.GRAY;
-                        break;
                     case PATH:
                         colour = Color.WHITE;
                         break;
@@ -256,11 +255,11 @@ public class genAndSolve {
 
                 if (mazeStartImage != null) {
                     Image image = mazeStartImage.getImage();
-                    g.drawImage(image, start.x*cellSize, start.y*cellSize, cellSize, cellSize, null );
+                    g.drawImage(image, (start.x+1)*cellSize, start.y*cellSize, cellSize, cellSize, null );
                 }
                 if (mazeEndImage != null) {
                     Image image = mazeEndImage.getImage();
-                    g.drawImage(image, end.x * cellSize, end.y * cellSize, cellSize, cellSize, null);
+                    g.drawImage(image, (end.x+-1) * cellSize, end.y * cellSize, cellSize, cellSize, null);
                 }
             }
         }
