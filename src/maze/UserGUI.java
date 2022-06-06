@@ -5,14 +5,10 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.awt.image.BufferedImage;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
 import java.io.*;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Objects;
-
-import static java.awt.Color.blue;
-import static java.awt.Color.red;
 
 
 public class UserGUI extends JFrame implements ActionListener, Runnable{
@@ -22,7 +18,7 @@ public class UserGUI extends JFrame implements ActionListener, Runnable{
 
     public static boolean isLogo = false;
 
-    public Maze currentMaze;
+    public static Maze currentMaze;
 
     public static JPanel pnlDisplay;
     private JMenu manual;
@@ -38,6 +34,13 @@ public class UserGUI extends JFrame implements ActionListener, Runnable{
     private JMenuItem open;
     private JToggleButton mazeSolutions;
     private static int size;
+
+    public static boolean isFromDB = false;
+
+
+    public static ArrayList<Point> savedDirections = new ArrayList<>();
+
+    public static ArrayList<Point> retrievedPoints = new ArrayList<>();
 
     public UserGUI(String title) throws HeadlessException, IOException {
         super(title);
@@ -129,6 +132,7 @@ public class UserGUI extends JFrame implements ActionListener, Runnable{
             // Insert Manual Generation Code Here
         }
         else if (src == autoGen){
+            isFromDB = false;
             JPanel myPanel = new JPanel();
             myPanel.add(new JLabel("Size:"));
 
@@ -158,22 +162,20 @@ public class UserGUI extends JFrame implements ActionListener, Runnable{
                 final Maze[] g = {new Maze(r[0].width, r[0].height)};
                 pnlDisplay.removeAll();
                 pnlDisplay.add(g[0], BorderLayout.CENTER);
-                setVisible(true);
+                pnlDisplay.setVisible(true);
                 currentMaze = g[0];
-                this.addKeyListener(new KeyAdapter() {
+                addKeyListener(new KeyAdapter() {
                     @Override
                     public void keyPressed(KeyEvent e) {
                         int code = e.getKeyCode();
                         if (code == KeyEvent.VK_SPACE) {
-                            r[0] = pnlDisplay.getBounds();
-                            g[0] = new Maze(r[0].width, r[0].height);
-                            currentMaze = g[0];
-                            pnlDisplay.add(g[0], BorderLayout.CENTER);
+                            loadMaze();
                         }
-                        repaint();
+
                     }
                 });
-
+                pnlDisplay.revalidate();
+                pnlDisplay.repaint();
             }
         }
         else if (src == logoAdd){
@@ -191,7 +193,6 @@ public class UserGUI extends JFrame implements ActionListener, Runnable{
 
         }
         else if (src == save){
-
             JPanel myPanel = new JPanel();
             JTextField title = new JTextField(8);
             JTextField author = new JTextField(8);
@@ -205,7 +206,7 @@ public class UserGUI extends JFrame implements ActionListener, Runnable{
                 if (title.getText().length() > 0 && author.getText().length() > 0 && !databaseStorage.retrieveTitles().contains(title.getText())) {
                     createImage(title.getText());
                     try {
-                        databaseStorage.insertMaze(title.getText(), author.getText());
+                        databaseStorage.insertMaze(title.getText(), author.getText(), convert());
                     } catch (SQLException | FileNotFoundException ex) {
                         ex.printStackTrace();
                     }
@@ -236,6 +237,29 @@ public class UserGUI extends JFrame implements ActionListener, Runnable{
         }
     }
 
+    public String convert(){
+        String totalxy = "";
+        for (int i = 0; i < savedDirections.size(); i++){
+            Point p = savedDirections.get(i);
+            String x = String.valueOf(p.x);
+            String y = String.valueOf(p.y);
+            String xy = x.concat("-" + y);
+            totalxy = totalxy.concat(xy +",");
+        }
+        return totalxy;
+    }
+
+    public static void loadMaze(){
+        final Rectangle[] r = {pnlDisplay.getBounds()};
+        final Maze[] g = {new Maze(r[0].width, r[0].height)};
+        savedDirections.clear();
+        r[0] = pnlDisplay.getBounds();
+        g[0] = new Maze(r[0].width, r[0].height);
+        currentMaze = g[0];
+        pnlDisplay.add(g[0], BorderLayout.CENTER);
+        pnlDisplay.revalidate();
+        pnlDisplay.repaint();
+    }
 
     public void  createImage(String title) {
         BufferedImage bi = new BufferedImage(pnlDisplay.getWidth(), pnlDisplay.getHeight(), BufferedImage.TYPE_INT_ARGB);

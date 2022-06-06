@@ -1,13 +1,8 @@
 package maze;
 
-import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
-import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
 import java.util.Stack;
-import java.util.Random;
 
 public class genAndSolve {
     public static boolean genSolutions;
@@ -42,8 +37,10 @@ public class genAndSolve {
     // start and end of maze
     private Point start;
     private Point end;
+    public int p;
 
     public genAndSolve(int width, int height, int size) {
+        p = 0;
         size = Math.abs(size);
         columns = Math.abs(width) / size;
         rows = Math.abs(height) / size;
@@ -101,7 +98,16 @@ public class genAndSolve {
         while (!goodIndices[rand]) {
             rand = (int) (Math.random() * n);
         }
-        return options[rand]; // return the random neighbor
+        Point temp = options[rand];
+        if (!UserGUI.isFromDB) {
+            UserGUI.savedDirections.add(temp);
+        }
+        else{
+            temp = UserGUI.retrievedPoints.get(p);
+        }
+        p++;
+
+        return temp; // return the random neighbor
 
     }
 

@@ -2,6 +2,7 @@ package maze;
 
 
 import javax.imageio.ImageIO;
+import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.*;
 import java.sql.*;
@@ -16,6 +17,8 @@ public class databaseStorage {
     private static String schema;
 
     public static InputStream tempStorage;
+
+    public static ArrayList<Point> test = new ArrayList<>();
 
     public static void createNewDatabase(String fileName) throws IOException {
         Properties props = new Properties();
@@ -47,6 +50,7 @@ public class databaseStorage {
                 + "	Created text,\n"
                 + "	Edited text,\n"
                 + "	Image blob NOT NULL,\n"
+                + "	Maze text NOT NULL,\n"
                 + "	capacity real\n"
                 + ");";
         try (Connection conn = DriverManager.getConnection(url);
@@ -58,7 +62,7 @@ public class databaseStorage {
         }
     }
 
-    public static void insertMaze(String title, String author) throws SQLException, FileNotFoundException {
+    public static void insertMaze(String title, String author, String maze) throws SQLException, FileNotFoundException {
         File image = new File("src/images/onSave/"+title+".png");
         FileInputStream inputStream = new FileInputStream(image);
         Connection conn = null;
@@ -69,10 +73,11 @@ public class databaseStorage {
         }
         try {
             assert conn != null;
-            try (PreparedStatement pstmt = conn.prepareStatement("INSERT INTO Mazes (title,author,created,edited,image) VALUES(?,?,datetime('now', 'localtime'),datetime('now', 'localtime'),?)")) {
+            try (PreparedStatement pstmt = conn.prepareStatement("INSERT INTO Mazes (title,author,created,edited,image,maze) VALUES(?,?,datetime('now', 'localtime'),datetime('now', 'localtime'),?,?)")) {
                 pstmt.setString(1, title);
                 pstmt.setString(2, author);
                 pstmt.setBinaryStream(3,  inputStream, (int)(image.length()));
+                pstmt.setString(4, maze);
                 pstmt.executeUpdate();
             }
         } catch (SQLException e) {
@@ -89,7 +94,7 @@ public class databaseStorage {
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
-        String sql = "SELECT title, author, created, edited, image FROM Mazes";
+        String sql = "SELECT title, author, created, edited, image, maze FROM Mazes";
 
         try (
              Statement stmt  = conn.createStatement();
@@ -105,6 +110,7 @@ public class databaseStorage {
                 a.add(rs.getString("author"));
                 a.add(rs.getString("created"));
                 a.add(rs.getString("edited"));
+                a.add(rs.getString("maze"));
                 data.add(a);
             }
 

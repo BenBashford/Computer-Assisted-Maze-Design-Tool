@@ -15,11 +15,13 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import javax.swing.table.DefaultTableModel;
 
+import static java.lang.Integer.parseInt;
+
 public class databaseGUI extends JFrame implements ActionListener, Runnable {
 
     private static final int WIDTH = 600;
     private static final int HEIGHT = 400;
-    private final String[] columnsNames = {"Maze Title", "Author Name", "Date Created", "Last Edit"};
+    private final String[] columnsNames = {"Maze Title", "Author Name", "Date Created", "Last Edit", "Hidden"};
     private String[][] info = databaseStorage.retrieveMaze();
 
 
@@ -39,13 +41,16 @@ public class databaseGUI extends JFrame implements ActionListener, Runnable {
         JTable savedMazes = new JTable(model);
         savedMazes.setCellSelectionEnabled(false);
         savedMazes.setRowSelectionAllowed(true);
+        savedMazes.getColumnModel().getColumn(4).setPreferredWidth(0);
+        savedMazes.getColumnModel().getColumn(4).setMinWidth(0);
+        savedMazes.getColumnModel().getColumn(4).setMaxWidth(0);
         ListSelectionModel select = savedMazes.getSelectionModel();
         select.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         select.addListSelectionListener(e -> {
             if (!e.getValueIsAdjusting()) {
                 int[] row = savedMazes.getSelectedRows();
                 TableModel tm = savedMazes.getModel();
-                selectedMaze = (String) tm.getValueAt(row[0], 0);
+                selectedMaze = (String) tm.getValueAt(row[0], 4);
             }
         });
         JPanel pnlDisplay = createPanel(Color.WHITE);
@@ -72,18 +77,22 @@ public class databaseGUI extends JFrame implements ActionListener, Runnable {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        BufferedImage inputImage = null;
-        try {
-            inputImage = ImageIO.read(new File("src/images/retrieved/"+selectedMaze+".png"));
-        } catch (IOException ex) {
-            ex.printStackTrace();
+        ArrayList<Integer> retrievedDirections = new ArrayList<>();
+        ArrayList<Point> convertedDirections = new ArrayList<>();
+        String[] res = selectedMaze.split("[,]", 0);
+        for(String myStr: res) {
+            String[] idk = myStr.split("[-]", 0);
+            for (String myNextStr: idk){
+                retrievedDirections.add(Integer.valueOf(myNextStr));
+            }
         }
-        UserGUI.pnlDisplay.removeAll();
-        assert inputImage != null;
-        UserGUI.pnlDisplay.add(new JLabel(new ImageIcon(inputImage)
-        ));
-        UserGUI.pnlDisplay.revalidate();
-        UserGUI.pnlDisplay.repaint();
+        for(int n = 0; n < retrievedDirections.size(); n = n+2) {
+            Point temp = new Point(retrievedDirections.get(n), retrievedDirections.get(n + 1));
+            convertedDirections.add(temp);
+        }
+        UserGUI.isFromDB = true;
+        UserGUI.retrievedPoints = convertedDirections;
+        UserGUI.loadMaze();
     }
 
     @Override
