@@ -12,7 +12,13 @@ import java.util.Objects;
 
 
 public class imageInsert {
+
+    public static String logoPath = null;
+    public static String startPath = null;
+    public static String endPath = null;
+
     public static int logoSize;
+
     public static ImageIcon addImage(int imgType) {
         try {
             JFileChooser file = new JFileChooser();
@@ -46,9 +52,9 @@ public class imageInsert {
                         logoSize = 5;
                     }
 
+                    logoPath = path;
                     return (new ImageIcon(inputImage));
-                }
-                else if (imgType == 1) {
+                } else if (imgType == 1) {
                     JPanel myPanel = new JPanel();
                     myPanel.add(new JLabel("Size:"));
 
@@ -63,7 +69,9 @@ public class imageInsert {
                             "ham");
                     if (Objects.equals(s, "Start")) {
                         genAndSolve.mazeStartImage = (new ImageIcon(inputImage));
+                        startPath = path;
                     } else if (Objects.equals(s, "End")) {
+                        endPath = path;
                         genAndSolve.mazeEndImage = (new ImageIcon(inputImage));
                     }
 
@@ -71,8 +79,7 @@ public class imageInsert {
 
             }
 
-        }
-        catch(Exception e){
+        } catch (Exception e) {
             // Error message
         }
         return null;
@@ -92,14 +99,29 @@ public class imageInsert {
                 possibilities,
                 "ham");
 
-        // These sizes are arbitrary, if you find a way to make it so the overall maze dimensions don't change when changing maze size please do so.
         if (Objects.equals(s, "Start")) {
             genAndSolve.mazeStartImage = null;
+            startPath = null;
         } else if (Objects.equals(s, "End")) {
             genAndSolve.mazeEndImage = null;
+            endPath = null;
         } else if (Objects.equals(s, "Logo")) {
             genAndSolve.logo = null;
             UserGUI.isLogo = false;
+            logoPath = null;
         }
+    }
+
+    public static String returnPath(Integer n) {
+        if (n == 0) {
+            return logoPath;
+        }
+        else if (n == 1) {
+            return startPath;
+        }
+        else{
+            return endPath;
+        }
+
     }
 }

@@ -1,15 +1,19 @@
 package maze;
 
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
+import java.io.File;
+import java.io.IOException;
+import java.util.Objects;
 import java.util.Stack;
 
 public class genAndSolve {
     public static boolean genSolutions;
     private int rows, columns, cellSize;
 
-    private int randomX;
-    private int randomY;
+    private static int randomX;
+    private static int randomY;
     private int xLowerBound;
     private int xUpperBound;
     private int yLowerBound;
@@ -29,7 +33,7 @@ public class genAndSolve {
     public static ImageIcon mazeEndImage;
     public static ImageIcon logo;
 
-    public int imgSize = 0;
+    public static int imgSize;
 
     // main data structure
     private state[][] maze;
@@ -39,7 +43,11 @@ public class genAndSolve {
     private Point end;
     public int p;
 
+    private static int ranX;
+    private static int ranY;
+
     public genAndSolve(int width, int height, int size) {
+        imgSize = 0;
         p = 0;
         size = Math.abs(size);
         columns = Math.abs(width) / size;
@@ -54,8 +62,15 @@ public class genAndSolve {
         xUpperBound = (columns-7);
         yLowerBound = (3);
         yUpperBound = (rows-7);
-        randomX = xLowerBound + 2*(int)(Math.random()*((xUpperBound-xLowerBound)/2+1));
-        randomY = yLowerBound + 2*(int)(Math.random()*((yUpperBound-yLowerBound)/2+1));
+        if (UserGUI.isFromDB && databaseGUI.hasLogo){
+            randomX = databaseGUI.returnLogoPos(0);
+            randomY = databaseGUI.returnLogoPos(1);
+        }
+        else{
+            randomX = xLowerBound + 2*(int)(Math.random()*((xUpperBound-xLowerBound)/2+1));
+            randomY = yLowerBound + 2*(int)(Math.random()*((yUpperBound-yLowerBound)/2+1));
+        }
+
 
         configure();
         generate();
@@ -99,12 +114,14 @@ public class genAndSolve {
             rand = (int) (Math.random() * n);
         }
         Point temp = options[rand];
-        if (!UserGUI.isFromDB) {
-            UserGUI.savedDirections.add(temp);
-        }
-        else{
+
+
+        if (UserGUI.isFromDB) {
             temp = UserGUI.retrievedPoints.get(p);
         }
+        UserGUI.savedDirections.add(temp);
+
+
         p++;
 
         return temp; // return the random neighbor
@@ -140,7 +157,7 @@ public class genAndSolve {
             }
         }
 
-       if (UserGUI.isLogo) {
+       if (UserGUI.returnIsLogo()) {
            if (imageInsert.logoSize == 1) {
                maze[randomX][randomY] = state.IMAGE;
                imgSize = 1; // Number of PLACEHOLDER states replaced with IMAGE states
@@ -152,7 +169,6 @@ public class genAndSolve {
                        maze[randomX+x][randomY+y] = state.IMAGE;
                    }
                }
-
                imgSize = 4;
            }
            else if (imageInsert.logoSize == 5){
@@ -166,13 +182,51 @@ public class genAndSolve {
            }
        }
 
+       if (databaseGUI.hasLogo){
+           if (databaseGUI.returnLogoSize() == 1){
+               maze[randomX][randomY] = state.IMAGE;
+           }
+           else if (databaseGUI.returnLogoSize() == 3){
+               int x,y;
+               for (x = 0; x < 3; x++) {
+                   for (y = 0; y < 3; y++) {
+                       maze[randomX+x][randomY+y] = state.IMAGE;
+                   }
+               }
+           }
+           else if (databaseGUI.returnLogoSize() == 5){
+               int x,y;
+               for (x = 0; x < 5; x++) {
+                   for (y = 0; y < 5; y++) {
+                       maze[randomX+x][randomY+y] = state.IMAGE;
+                   }
+               }
+           }
+        }
+
+
     }
 
     private void generate() {
         Point current, next;
         Stack<Point> history = new Stack<Point>();
 
-        int nToVisit = ((columns - 1) * (rows - 1) / 4) - imgSize ;
+        int nToVisit;
+        if (UserGUI.isFromDB) {
+            if (databaseGUI.returnLogoSize() == 1) {
+                nToVisit = ((columns - 1) * (rows - 1) / 4) - 1;
+            }
+            else if (databaseGUI.returnLogoSize() == 3) {
+                nToVisit = ((columns - 1) * (rows - 1) / 4) - 4;
+            }
+            else{
+                nToVisit = ((columns - 1) * (rows - 1) / 4) - 9;
+            }
+
+        }
+        else{
+            nToVisit = ((columns - 1) * (rows - 1) / 4) - imgSize ;
+        }
         int nVisited = 1;
 
         current = new Point(start.x + 1, start.y);
@@ -218,7 +272,7 @@ public class genAndSolve {
         }
     }
 
-    public void draw(Graphics g) {
+    public void draw(Graphics g) throws IOException {
         for (int i = 0; i < columns; i++) {
             for (int j = 0; j < rows; j++) {
                 state state_g = maze[i][j];
@@ -250,25 +304,50 @@ public class genAndSolve {
                     }
 
                 }
-                if (logo != null) {
-                    Image image = logo.getImage();
-                    int n = imageInsert.logoSize;
-                    g.drawImage(image, randomX * cellSize, cellSize * randomY, cellSize * n, cellSize * n, null); // Replace measurements with variables depending on result from random placement
-                }
-
                 g.setColor(colour);
                 g.fillRect(x, y, cellSize, cellSize);
 
-                if (mazeStartImage != null) {
-                    Image image = mazeStartImage.getImage();
-                    g.drawImage(image, (start.x+1)*cellSize, start.y*cellSize, cellSize, cellSize, null );
-                }
-                if (mazeEndImage != null) {
-                    Image image = mazeEndImage.getImage();
-                    g.drawImage(image, (end.x+-1) * cellSize, end.y * cellSize, cellSize, cellSize, null);
-                }
             }
+        }
+        if (logo != null && !UserGUI.isFromDB) {
+            Image image;
+            int n;
+            image = logo.getImage();
+            n = imageInsert.logoSize;
+            ranX = randomX * cellSize;
+            ranY = randomY * cellSize;
+            g.drawImage(image, ranX, ranY, cellSize * n, cellSize * n, null);
+        }
+        if (UserGUI.isFromDB) {
+            if (databaseGUI.hasLogo) {
+                Image image;
+                int n;
+                ImageIcon icon = new ImageIcon("src/images/retrieved/logos/"+databaseGUI.returnTitle()+"Logo.png");
+                image = icon.getImage();
+                n = databaseGUI.returnLogoSize();
+                ranX = randomX * cellSize;
+                ranY = randomY * cellSize;
+                g.drawImage(image, ranX, ranY, cellSize * n, cellSize * n, null);
+            }
+        }
+
+        if (mazeStartImage != null) {
+            Image image = mazeStartImage.getImage();
+            g.drawImage(image, (start.x+1)*cellSize, start.y*cellSize, cellSize, cellSize, null );
+        }
+        if (mazeEndImage != null) {
+            Image image = mazeEndImage.getImage();
+            g.drawImage(image, (end.x+-1) * cellSize, end.y * cellSize, cellSize, cellSize, null);
         }
     }
 
+    public static String returnLogoCoordinates(){
+        String x = String.valueOf(randomX);
+        String y = String.valueOf(randomY);
+        return x.concat("-" + y);
+    }
+
+    public static String returnLogoSize(){
+        return String.valueOf(imageInsert.logoSize);
+    }
 }

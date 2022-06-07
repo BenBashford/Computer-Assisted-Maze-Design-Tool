@@ -41,7 +41,11 @@ public class Maze extends JPanel {
         super.paintComponent(g);
         g.setColor(Color.LIGHT_GRAY);
         g.fillRect(0,0, 400, 400);
-        maze.draw(g);
+        try {
+            maze.draw(g);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
 

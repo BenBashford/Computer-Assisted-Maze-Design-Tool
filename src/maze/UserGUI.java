@@ -16,6 +16,7 @@ public class UserGUI extends JFrame implements ActionListener, Runnable{
     private static final int WIDTH = 800;
     private static final int HEIGHT = 600;
 
+
     public static boolean isLogo = false;
 
     public static Maze currentMaze;
@@ -53,6 +54,7 @@ public class UserGUI extends JFrame implements ActionListener, Runnable{
         setMinimumSize(new Dimension(WIDTH, HEIGHT));
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLayout(new BorderLayout());
+        setResizable(false);
 
         pnlDisplay = createPanel(Color.WHITE);
         pnlDisplay.setLayout(new BorderLayout());
@@ -62,7 +64,7 @@ public class UserGUI extends JFrame implements ActionListener, Runnable{
         auto = createJMenu("Auto");
         imgSelect = createJMenu("Select Image/s");
         saveOpen = createJMenu("Save/Open");
-        mazeSolutions = createToggleButton("Display Solution");
+        mazeSolutions = createToggleButton("Generate With Solution");
         top.add (manual);
         top.add (auto);
         top.add (imgSelect);
@@ -158,7 +160,7 @@ public class UserGUI extends JFrame implements ActionListener, Runnable{
             }
 
             if ((s != null)){
-                final Rectangle[] r = {pnlDisplay.getBounds()};
+                final Rectangle[] r = {pnlDisplay.getBounds()}; // In case window needs to become resizable, this code will accommodate
                 final Maze[] g = {new Maze(r[0].width, r[0].height)};
                 pnlDisplay.removeAll();
                 pnlDisplay.add(g[0], BorderLayout.CENTER);
@@ -169,7 +171,7 @@ public class UserGUI extends JFrame implements ActionListener, Runnable{
                     public void keyPressed(KeyEvent e) {
                         int code = e.getKeyCode();
                         if (code == KeyEvent.VK_SPACE) {
-                            loadMaze();
+                            loadMaze(false);
                         }
 
                     }
@@ -204,14 +206,14 @@ public class UserGUI extends JFrame implements ActionListener, Runnable{
                     null, myPanel, "Save Current Maze?", JOptionPane.OK_CANCEL_OPTION);
             if (result == JOptionPane.OK_OPTION){
                 if (title.getText().length() > 0 && author.getText().length() > 0 && !databaseStorage.retrieveTitles().contains(title.getText())) {
-                    createImage(title.getText());
+                        createScreenshot(title.getText());
                     try {
                         databaseStorage.insertMaze(title.getText(), author.getText(), convert());
                     } catch (SQLException | FileNotFoundException ex) {
                         ex.printStackTrace();
                     }
                 }
-                else if (this.currentMaze == null){
+                else if (currentMaze == null){
                     JOptionPane.showMessageDialog(null, "No currently generated maze", "Error", JOptionPane.INFORMATION_MESSAGE);
                 }
                 else if (databaseStorage.retrieveTitles().contains(title.getText())){
@@ -234,8 +236,13 @@ public class UserGUI extends JFrame implements ActionListener, Runnable{
         }
         else if (src == mazeSolutions){
             genAndSolve.genSolutions = !genAndSolve.genSolutions;
+            if (size != 0) {
+                loadMaze(false);
+            }
         }
     }
+
+
 
     public String convert(){
         String totalxy = "";
@@ -249,7 +256,10 @@ public class UserGUI extends JFrame implements ActionListener, Runnable{
         return totalxy;
     }
 
-    public static void loadMaze(){
+    public static void loadMaze(Boolean fromDB){
+        if (fromDB){
+            size = databaseGUI.returnSize();
+        }
         final Rectangle[] r = {pnlDisplay.getBounds()};
         final Maze[] g = {new Maze(r[0].width, r[0].height)};
         savedDirections.clear();
@@ -261,26 +271,32 @@ public class UserGUI extends JFrame implements ActionListener, Runnable{
         pnlDisplay.repaint();
     }
 
-    public void  createImage(String title) {
-        BufferedImage bi = new BufferedImage(pnlDisplay.getWidth(), pnlDisplay.getHeight(), BufferedImage.TYPE_INT_ARGB);
-        Graphics2D g2d = bi.createGraphics();
+    public void createScreenshot(String title){
+        BufferedImage screenShot = new BufferedImage(pnlDisplay.getWidth(), pnlDisplay.getHeight(), BufferedImage.TYPE_INT_ARGB);
+        Graphics2D g2d = screenShot.createGraphics();
         currentMaze.paintAll(g2d);
         g2d.dispose();
+
         try
         {
-            ImageIO.write ( bi, "png", new File ( "src/images/onSave/"+title+".png" ) );
+            ImageIO.write ( screenShot, "png", new File ( "src/images/MazeImages/"+title+"-Screenshot.png" ) );
         }
         catch ( IOException e )
         {
             e.printStackTrace ();
         }
-
     }
+
+
+
 
     public static int returnSize(){
         return size;
     }
 
+    public static boolean returnIsLogo(){
+        return isLogo;
+    }
 
 
     public static void main (String[] args) throws IOException {
