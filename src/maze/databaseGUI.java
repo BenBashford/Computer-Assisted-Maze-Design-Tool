@@ -24,7 +24,7 @@ public class databaseGUI extends JFrame implements ActionListener, Runnable {
     private static int selectedLogoY;
     private static int selectedLogoSize;
     private static String selectedTitle;
-    public static boolean hasLogo = true;
+    public static boolean hasLogo;
 
     public void createGUI() {
         DefaultTableModel model = new DefaultTableModel(info, columnsNames){
@@ -61,6 +61,7 @@ public class databaseGUI extends JFrame implements ActionListener, Runnable {
 
                 String tempLogoPos = (String) tm.getValueAt(row[0], 6); // Really lazy way of error checking but should function
                 if (tempLogoPos != null) {
+                    hasLogo = true;
                     String[] idk = tempLogoPos.split("[-]", 0);
                     ArrayList<Integer> retrievedPos = new ArrayList<>();
                     for (String myNextStr : idk) {

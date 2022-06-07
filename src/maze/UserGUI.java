@@ -236,9 +236,10 @@ public class UserGUI extends JFrame implements ActionListener, Runnable{
         }
         else if (src == mazeSolutions){
             genAndSolve.genSolutions = !genAndSolve.genSolutions;
-            if (size != 0) {
-                loadMaze(false);
-            }
+            // Add this code once real time maze updating is implimented
+//            if (size != 0) {
+//                loadMaze(false);
+//            }
         }
     }
 

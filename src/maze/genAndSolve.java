@@ -28,7 +28,6 @@ public class genAndSolve {
     }
 
 
-
     public static ImageIcon mazeStartImage;
     public static ImageIcon mazeEndImage;
     public static ImageIcon logo;
@@ -213,14 +212,17 @@ public class genAndSolve {
 
         int nToVisit;
         if (UserGUI.isFromDB) {
-            if (databaseGUI.returnLogoSize() == 1) {
-                nToVisit = ((columns - 1) * (rows - 1) / 4) - 1;
-            }
-            else if (databaseGUI.returnLogoSize() == 3) {
-                nToVisit = ((columns - 1) * (rows - 1) / 4) - 4;
+            if (databaseGUI.hasLogo) {
+                if (databaseGUI.returnLogoSize() == 1) {
+                    nToVisit = ((columns - 1) * (rows - 1) / 4) - 1;
+                } else if (databaseGUI.returnLogoSize() == 3) {
+                    nToVisit = ((columns - 1) * (rows - 1) / 4) - 4;
+                } else {
+                    nToVisit = ((columns - 1) * (rows - 1) / 4) - 9;
+                }
             }
             else{
-                nToVisit = ((columns - 1) * (rows - 1) / 4) - 9;
+                nToVisit = ((columns - 1) * (rows - 1) / 4);
             }
 
         }
@@ -318,8 +320,7 @@ public class genAndSolve {
             ranY = randomY * cellSize;
             g.drawImage(image, ranX, ranY, cellSize * n, cellSize * n, null);
         }
-        if (UserGUI.isFromDB) {
-            if (databaseGUI.hasLogo) {
+        if (UserGUI.isFromDB && databaseGUI.hasLogo) {
                 Image image;
                 int n;
                 ImageIcon icon = new ImageIcon("src/images/retrieved/logos/"+databaseGUI.returnTitle()+"Logo.png");
@@ -328,7 +329,6 @@ public class genAndSolve {
                 ranX = randomX * cellSize;
                 ranY = randomY * cellSize;
                 g.drawImage(image, ranX, ranY, cellSize * n, cellSize * n, null);
-            }
         }
 
         if (mazeStartImage != null) {
