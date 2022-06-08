@@ -36,9 +36,13 @@ public class UserGUI extends JFrame implements ActionListener, Runnable{
     private JToggleButton mazeSolutions;
     public static int size;
 
-    public static boolean isFromDB;
+
 
     public static boolean isReprint;
+
+    public static boolean isFromDB = false;
+    public static boolean editable = false;
+
 
 
     public static ArrayList<Point> savedDirections = new ArrayList<>();
@@ -59,6 +63,7 @@ public class UserGUI extends JFrame implements ActionListener, Runnable{
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLayout(new BorderLayout());
         setResizable(false);
+        editable = false;
 
         pnlDisplay = createPanel(Color.WHITE);
         pnlDisplay.setLayout(new BorderLayout());
@@ -134,14 +139,90 @@ public class UserGUI extends JFrame implements ActionListener, Runnable{
 
     public void actionPerformed(ActionEvent e) {
         Object src = e.getSource();
-        if (src == manGen){
-            // Insert Manual Generation Code Here
+        int mouseX = 0;
+        int mouseY = 0;
+        if (src == manGen){ //manual generation
+            isFromDB = false; //maze is not pulled from database
+            editable = true;
+            //create a new panel to determine the cell size
+            JPanel myPanel = new JPanel();
+            myPanel.add(new JLabel("Size:"));
+
+            Object[] possibilities = {"Small", "Medium", "Large"};
+            String s = (String)JOptionPane.showInputDialog(
+                    myPanel,
+                    "Please Select a Maze Size:\n",
+                    "Size Selector",
+                    JOptionPane.PLAIN_MESSAGE, null,
+                    possibilities,
+                    "ham");
+
+            // These sizes are arbitrary, if you find a way to make it so the overall maze dimensions don't change when changing maze size please do so.
+            if (Objects.equals(s, "Small")){
+                size = 40;
+            }
+            else if (Objects.equals(s, "Medium")){
+                size = 30;
+            }
+            else if (Objects.equals(s, "Large")) {
+                size = 20;
+            }
+            //
+            if ((s != null)) {
+                final Rectangle[] r = {pnlDisplay.getBounds()}; // In case window needs to become resizable, this code will accommodate
+                //genAndSolve[] a = {new genAndSolve(r[0].width,r[0].height,size)};
+                Maze[] g = {new Maze(r[0].width, r[0].height)};
+                int maxWidthCoord = r[0].width/size;
+                int maxHeightCoord = r[0].height/size;
+                pnlDisplay.removeAll();
+                pnlDisplay.add(g[0], BorderLayout.CENTER);
+                //pnlDisplay.setVisible(true);
+                currentMaze = g[0];
+
+                pnlDisplay.addMouseListener(new MouseAdapter() {
+                    public void mouseClicked(MouseEvent c) {
+                        if (editable) { //check if the maze is editable
+                            pnlDisplay.removeAll();
+                            int coordX = c.getX()/size; //get the x coordinate of the mouse
+                            int coordY = c.getY()/size; //get the y coordinate of the mouse
+
+                            if (String.valueOf(g[0].maze.maze[coordX][coordY]) == "WALL" && coordX != 0 && coordY != 0 && coordX < maxWidthCoord-1 && coordY < maxHeightCoord-1) {
+                                g[0].maze.maze[coordX][coordY] = genAndSolve.state.PATH;
+                                currentMaze = g[0];
+
+                                pnlDisplay.add(currentMaze, BorderLayout.CENTER);
+                                pnlDisplay.revalidate();
+                                pnlDisplay.repaint();
+
+                            }
+                            else if (String.valueOf(g[0].maze.maze[coordX][coordY]) == "PATH" && coordX < maxWidthCoord-1 && coordY < maxHeightCoord-1) {
+                                g[0].maze.maze[coordX][coordY] = genAndSolve.state.WALL;
+                                currentMaze = g[0];
+                                pnlDisplay.add(currentMaze, BorderLayout.CENTER);
+                                pnlDisplay.revalidate();
+                                pnlDisplay.repaint();
+
+                            }
+                        }
+                    }
+
+                });
+
+                pnlDisplay.revalidate();
+                pnlDisplay.repaint();
+                    //if in start,finish or border
+                        //do nothing
+                //on space - reset
+            }
+
         }
         else if (src == autoGen){
             isFromDB = false;
+
             isReprint = false;
             savedDirections.clear();
             storedXY.clear();
+            editable = false;
             JPanel myPanel = new JPanel();
             myPanel.add(new JLabel("Size:"));
 
