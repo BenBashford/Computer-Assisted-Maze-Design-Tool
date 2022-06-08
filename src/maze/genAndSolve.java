@@ -1,16 +1,15 @@
 package maze;
 
-import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
-import java.io.File;
 import java.io.IOException;
-import java.util.Objects;
 import java.util.Stack;
 
 public class genAndSolve {
     public static boolean genSolutions;
-    private int rows, columns, cellSize;
+    private static int rows;
+    private static int columns;
+    private int cellSize;
 
     private static int randomX;
     private static int randomY;
@@ -35,7 +34,7 @@ public class genAndSolve {
     public static int imgSize;
 
     // main data structure
-    public state[][] maze;
+    public static state[][] maze;
 
     // start and end of maze
     private Point start;
@@ -62,9 +61,13 @@ public class genAndSolve {
         xUpperBound = (columns-7);
         yLowerBound = (3);
         yUpperBound = (rows-7);
-        if (UserGUI.isFromDB && databaseGUI.hasLogo){
+        if ((UserGUI.isFromDB && databaseGUI.hasLogo && !UserGUI.isReloaded)){
             randomX = databaseGUI.returnLogoPos(0);
             randomY = databaseGUI.returnLogoPos(1);
+        }
+        else if(UserGUI.isReloaded && UserGUI.isLogo){
+            randomX = UserGUI.reloadImageX;
+            randomY = UserGUI.reloadImageY;
         }
         else{
             randomX = xLowerBound + 2*(int)(Math.random()*((xUpperBound-xLowerBound)/2+1));
@@ -72,14 +75,16 @@ public class genAndSolve {
         }
 
 
-        configure();
-        generate();
+            configure();
+        if (!UserGUI.isReloaded) {
+            generate();
+        }
         if (genSolutions) {
             solve();
         }
     }
 
-    private Point checkNext(Point current, state target, int dist) {
+    private static Point checkNext(Point current, state target, int dist) {
 
         final int n = 4; // number of neighbors
 
@@ -125,55 +130,66 @@ public class genAndSolve {
         maze = new state[columns][rows];
 
         int i, j;
-
-        for (i = 0; i < columns; i++) {
-            maze[i][0] = state.WALL;
-            maze[i][rows - 1] = state.WALL;
-        }
-
-        for (j = 0; j < rows; j++) {
-            maze[0][j] = state.WALL;
-            maze[columns -1][j] = state.WALL;
-        }
-
-        for (i = 1; i < columns - 1; i += 2) {
-            for (j = 1; j < rows - 1; j += 2) {
-                maze[i][j] = state.PLACEHOLDER;
-                maze[i + 1][j] = state.WALL;
-                maze[i][j + 1] = state.WALL;
+        if (UserGUI.isReloaded) {
+            int n = 0;
+            int maxWidthCoord = genAndSolve.maze.length;
+            int maxHeightCoord = genAndSolve.maze[0].length;
+            for (i = 0; i < maxWidthCoord; i++) { //x coordinate
+                for (j = 0; j < maxHeightCoord; j++) { //y coordinate
+                    maze[i][j] = genAndSolve.state.valueOf(UserGUI.reloadStorage.get(n)); //place walls around the border
+                    n++;
+                }
             }
         }
+        else{
+            for (i = 0; i < columns; i++) {
+                maze[i][0] = state.WALL;
+                maze[i][rows - 1] = state.WALL;
+            }
 
-        for (i = 2; i < columns - 2; i += 2) {
-            for (j = 2; j < rows - 2; j += 2) {
-                maze[i][j] = state.WALL;
+            for (j = 0; j < rows; j++) {
+                maze[0][j] = state.WALL;
+                maze[columns - 1][j] = state.WALL;
+            }
+
+            for (i = 1; i < columns - 1; i += 2) {
+                for (j = 1; j < rows - 1; j += 2) {
+                    maze[i][j] = state.PLACEHOLDER;
+                    maze[i + 1][j] = state.WALL;
+                    maze[i][j + 1] = state.WALL;
+                }
+            }
+
+            for (i = 2; i < columns - 2; i += 2) {
+                for (j = 2; j < rows - 2; j += 2) {
+                    maze[i][j] = state.WALL;
+                }
+            }
+
+
+            if (UserGUI.isLogo) {
+                if (imageInsert.logoSize == 1) {
+                    maze[randomX][randomY] = state.IMAGE;
+                    imgSize = 1; // Number of PLACEHOLDER states replaced with IMAGE states
+                } else if (imageInsert.logoSize == 3) {
+                    int x, y;
+                    for (x = 0; x < 3; x++) {
+                        for (y = 0; y < 3; y++) {
+                            maze[randomX + x][randomY + y] = state.IMAGE;
+                        }
+                    }
+                    imgSize = 4;
+                } else if (imageInsert.logoSize == 5) {
+                    int x, y;
+                    for (x = 0; x < 5; x++) {
+                        for (y = 0; y < 5; y++) {
+                            maze[randomX + x][randomY + y] = state.IMAGE;
+                        }
+                    }
+                    imgSize = 9;
+                }
             }
         }
-
-       if (UserGUI.isLogo) {
-           if (imageInsert.logoSize == 1) {
-               maze[randomX][randomY] = state.IMAGE;
-               imgSize = 1; // Number of PLACEHOLDER states replaced with IMAGE states
-           }
-           else if (imageInsert.logoSize == 3){
-               int x,y;
-               for (x = 0; x < 3; x++) {
-                   for (y = 0; y < 3; y++) {
-                       maze[randomX+x][randomY+y] = state.IMAGE;
-                   }
-               }
-               imgSize = 4;
-           }
-           else if (imageInsert.logoSize == 5){
-               int x,y;
-               for (x = 0; x < 5; x++) {
-                   for (y = 0; y < 5; y++) {
-                       maze[randomX+x][randomY+y] = state.IMAGE;
-                   }
-               }
-               imgSize = 9;
-           }
-       }
     }
 
     private void generate() {
@@ -228,6 +244,8 @@ public class genAndSolve {
         }
     }
 
+
+
     public void draw(Graphics g) throws IOException {
         for (int i = 0; i < columns; i++) {
             for (int j = 0; j < rows; j++) {
@@ -274,15 +292,16 @@ public class genAndSolve {
             ranY = randomY * cellSize;
             g.drawImage(image, ranX, ranY, cellSize * n, cellSize * n, null);
         }
+
         if (UserGUI.isFromDB && databaseGUI.hasLogo) {
-                Image image;
-                int n;
-                ImageIcon icon = new ImageIcon("src/images/retrieved/logos/"+databaseGUI.returnTitle()+"Logo.png");
-                image = icon.getImage();
-                n = databaseGUI.returnLogoSize();
-                ranX = randomX * cellSize;
-                ranY = randomY * cellSize;
-                g.drawImage(image, ranX, ranY, cellSize * n, cellSize * n, null);
+            Image image;
+            int n;
+            ImageIcon icon = new ImageIcon("src/images/retrieved/logos/"+databaseGUI.returnTitle()+"Logo.png");
+            image = icon.getImage();
+            n = databaseGUI.returnLogoSize();
+            ranX = randomX * cellSize;
+            ranY = randomY * cellSize;
+            g.drawImage(image, ranX, ranY, cellSize * n, cellSize * n, null);
         }
 
         if (mazeStartImage != null) {

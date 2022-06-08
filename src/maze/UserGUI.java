@@ -8,10 +8,12 @@ import java.awt.image.BufferedImage;
 import java.io.*;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.Objects;
 
 
-public class UserGUI extends JFrame implements ActionListener, Runnable{
+public class UserGUI extends JFrame implements ActionListener, Runnable {
 
     private static final int WIDTH = 800;
     private static final int HEIGHT = 600;
@@ -39,13 +41,17 @@ public class UserGUI extends JFrame implements ActionListener, Runnable{
     public static boolean isManual;
 
 
-
-
     public static boolean isFromDB = false;
     public static boolean editable = false;
 
+    public static boolean isReloaded = false;
 
-    static ArrayList<String> retrievedDirections = new ArrayList<>();
+    public static ArrayList<String> retrievedDirections = new ArrayList<>();
+
+    public static ArrayList<String> reloadStorage = new ArrayList<>();
+
+    public static int reloadImageX;
+    public static int reloadImageY;
 
 
     public UserGUI(String title) throws HeadlessException, IOException {
@@ -60,7 +66,6 @@ public class UserGUI extends JFrame implements ActionListener, Runnable{
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLayout(new BorderLayout());
         setResizable(false);
-        editable = false;
 
 
         pnlDisplay = createPanel(Color.WHITE);
@@ -73,9 +78,9 @@ public class UserGUI extends JFrame implements ActionListener, Runnable{
         saveOpen = createJMenu("Save/Open");
         mazeSolutions = createToggleButton("Generate With Solution");
         setEditable = createToggleButton("Enable Manual Maze Editing");
-        top.add (manual);
-        top.add (auto);
-        top.add (imgSelect);
+        top.add(manual);
+        top.add(auto);
+        top.add(imgSelect);
         top.add(saveOpen);
         top.add(mazeSolutions);
         top.add(setEditable);
@@ -102,13 +107,14 @@ public class UserGUI extends JFrame implements ActionListener, Runnable{
 
 
     }
-    private JPanel createPanel(Color c){
+
+    private JPanel createPanel(Color c) {
         JPanel temp = new JPanel();
         temp.setBackground(c);
         return temp;
     }
 
-    private JToggleButton createToggleButton(String str){
+    private JToggleButton createToggleButton(String str) {
         JToggleButton temp = new JToggleButton();
         temp.setFocusable(false);
         temp.setText(str);
@@ -116,14 +122,14 @@ public class UserGUI extends JFrame implements ActionListener, Runnable{
         return temp;
     }
 
-    private JMenuItem createJMenuItem(String str){
+    private JMenuItem createJMenuItem(String str) {
         JMenuItem temp = new JMenuItem();
         temp.setText(str);
         temp.addActionListener(this);
         return temp;
     }
 
-    private JMenu createJMenu(String str){
+    private JMenu createJMenu(String str) {
         JMenu temp = new JMenu();
         temp.setText(str);
         return temp;
@@ -137,14 +143,14 @@ public class UserGUI extends JFrame implements ActionListener, Runnable{
 
     public void actionPerformed(ActionEvent e) {
         Object src = e.getSource();
-        if (src == manGen){ //manual generation
+        if (src == manGen) { //manual generation
             isFromDB = false; //maze is not pulled from database
             //create a new panel to determine the cell size
             JPanel myPanel = new JPanel();
             myPanel.add(new JLabel("Size:"));
 
             Object[] possibilities = {"Small", "Medium", "Large"};
-            String s = (String)JOptionPane.showInputDialog(
+            String s = (String) JOptionPane.showInputDialog(
                     myPanel,
                     "Please Select a Maze Size:\n",
                     "Size Selector",
@@ -153,13 +159,11 @@ public class UserGUI extends JFrame implements ActionListener, Runnable{
                     "ham");
 
             // These sizes are arbitrary, if you find a way to make it so the overall maze dimensions don't change when changing maze size please do so.
-            if (Objects.equals(s, "Small")){
+            if (Objects.equals(s, "Small")) {
                 size = 40;
-            }
-            else if (Objects.equals(s, "Medium")){
+            } else if (Objects.equals(s, "Medium")) {
                 size = 30;
-            }
-            else if (Objects.equals(s, "Large")) {
+            } else if (Objects.equals(s, "Large")) {
                 size = 20;
             }
             //
@@ -175,12 +179,11 @@ public class UserGUI extends JFrame implements ActionListener, Runnable{
                 pnlDisplay.setVisible(true);
                 currentMaze = g[0];
                 //double for loop deleting the whole maze
-                for (int i = 0; i < maxWidthCoord;i++){ //x coordinate
-                    for (int j = 0; j < maxHeightCoord;j++){ //y coordinate
-                        if ((i * j == 0) || (i == maxWidthCoord-1 || j == maxHeightCoord-1)){
+                for (int i = 0; i < maxWidthCoord; i++) { //x coordinate
+                    for (int j = 0; j < maxHeightCoord; j++) { //y coordinate
+                        if ((i * j == 0) || (i == maxWidthCoord - 1 || j == maxHeightCoord - 1)) {
                             Maze.maze.maze[i][j] = genAndSolve.state.WALL; //place walls around the border
-                        }
-                        else{
+                        } else {
                             Maze.maze.maze[i][j] = genAndSolve.state.PATH; //fill the center with paths
                         }
 
@@ -208,11 +211,11 @@ public class UserGUI extends JFrame implements ActionListener, Runnable{
 //                                else if (String.valueOf(g[0].maze.maze[coordX][coordY]) == "PATH" && coordX < maxWidthCoord - 1 && coordY < maxHeightCoord - 1  && genTest) {
 //                                    g[0].maze.maze[coordX][coordY] = genAndSolve.state.PATH;
 //                                }
-                                pnlDisplay.removeAll();
-                                pnlDisplay.add(g[0], BorderLayout.CENTER);
-                                pnlDisplay.revalidate();
-                                pnlDisplay.repaint();
-                            }
+                            pnlDisplay.removeAll();
+                            pnlDisplay.add(g[0], BorderLayout.CENTER);
+                            pnlDisplay.revalidate();
+                            pnlDisplay.repaint();
+                        }
 
                     });
                 }
@@ -223,17 +226,15 @@ public class UserGUI extends JFrame implements ActionListener, Runnable{
                 //on space - reset
             }
 
-        }
-        else if (src == autoGen){
+        } else if (src == autoGen) {
             isFromDB = false;
             isManual = false;
-            editable = false;
             JPanel myPanel = new JPanel();
             myPanel.add(new JLabel("Size:"));
 
 
             Object[] possibilities = {"Small", "Medium", "Large"};
-            String s = (String)JOptionPane.showInputDialog(
+            String s = (String) JOptionPane.showInputDialog(
                     myPanel,
                     "Please Select a Maze Size:\n",
                     "Size Selector",
@@ -241,17 +242,15 @@ public class UserGUI extends JFrame implements ActionListener, Runnable{
                     possibilities,
                     "ham");
 
-            if (Objects.equals(s, "Small")){
+            if (Objects.equals(s, "Small")) {
                 size = 40;
-            }
-            else if (Objects.equals(s, "Medium")){
+            } else if (Objects.equals(s, "Medium")) {
                 size = 30;
-            }
-            else if (Objects.equals(s, "Large")){
+            } else if (Objects.equals(s, "Large")) {
                 size = 20;
             }
 
-            if ((s != null)){
+            if ((s != null)) {
                 final Rectangle[] r = {pnlDisplay.getBounds()}; // In case window needs to become resizable, this code will accommodate
                 final Maze[] g = {new Maze(r[0].width, r[0].height)};
                 pnlDisplay.removeAll();
@@ -303,25 +302,44 @@ public class UserGUI extends JFrame implements ActionListener, Runnable{
                     });
                 }
             }
-        }
-        else if (src == logoAdd){
+        } else if (src == logoAdd) {
             isLogo = true;
-           genAndSolve.logo = (imageInsert.addImage(0));
+            genAndSolve.logo = (imageInsert.addImage(0));
+
             if (UserGUI.size != 0) {
-                loadMaze(false);
+                if (!isManual){
+                    loadMaze(false);
+                }
+                else {
+                    reload(Save());
+                }
             }
-        }
-        else if (src == mazeAdd){
+        } else if (src == mazeAdd) {
             imageInsert.addImage(1);
-        }
-        else if (src == imageRemove){
+            if (UserGUI.size != 0) {
+                if (!isManual){
+                    loadMaze(false);
+                }
+                else {
+                    reload(Save());
+                }
+            }
+        } else if (src == imageRemove) {
             imageInsert.removeImage();
-        }
-        else if (src == open){
+            if (UserGUI.size != 0) {
+                if (!isManual){
+                    loadMaze(false);
+                }
+                else {
+                    reload(Save());
+                    System.out.println("Test");
+                }
+            }
+
+        } else if (src == open) {
             new databaseGUI("Database");
 
-        }
-        else if (src == save){
+        } else if (src == save) {
             JPanel myPanel = new JPanel();
             JTextField title = new JTextField(8);
             JTextField author = new JTextField(8);
@@ -331,54 +349,49 @@ public class UserGUI extends JFrame implements ActionListener, Runnable{
             myPanel.add(author, BorderLayout.SOUTH);
             int result = JOptionPane.showConfirmDialog(
                     null, myPanel, "Save Current Maze?", JOptionPane.OK_CANCEL_OPTION);
-            if (result == JOptionPane.OK_OPTION){
+            if (result == JOptionPane.OK_OPTION) {
                 if (title.getText().length() > 0 && author.getText().length() > 0 && !databaseStorage.retrieveTitles().contains(title.getText()) && validateName(title.getText())) {
-                        createScreenshot(title.getText());
+                    createScreenshot(title.getText());
                     try {
                         databaseStorage.insertMaze(title.getText(), author.getText(), Save());
                     } catch (SQLException | FileNotFoundException ex) {
                         ex.printStackTrace();
                     }
-                }
-                else if (currentMaze == null){
+                } else if (currentMaze == null) {
                     JOptionPane.showMessageDialog(null, "No currently generated maze", "Error", JOptionPane.INFORMATION_MESSAGE);
-                }
-                else if (databaseStorage.retrieveTitles().contains(title.getText())){
+                } else if (databaseStorage.retrieveTitles().contains(title.getText())) {
                     JOptionPane.showMessageDialog(null, "Title already used in database", "Error", JOptionPane.INFORMATION_MESSAGE);
-                }
-                else if (!validateName(title.getText())) {
+                } else if (!validateName(title.getText())) {
                     JOptionPane.showMessageDialog(null, "Invalid Title", "Error", JOptionPane.INFORMATION_MESSAGE);
-                    }
-                else{
+                } else {
                     String errMsg;
-                    if (title.getText().length() == 0 && author.getText().length() > 0){
+                    if (title.getText().length() == 0 && author.getText().length() > 0) {
                         errMsg = "Title";
-                    }
-                    else if (author.getText().length() == 0 && title.getText().length() > 0){
+                    } else if (author.getText().length() == 0 && title.getText().length() > 0) {
                         errMsg = "Author";
-                    }
-                    else{
+                    } else {
                         errMsg = "Title & Author";
                     }
                     JOptionPane.showMessageDialog(null, "Missing " + errMsg, "Error", JOptionPane.INFORMATION_MESSAGE);
                 }
             }
-        }
-        else if (src == mazeSolutions){
+        } else if (src == mazeSolutions) {
             genAndSolve.genSolutions = !genAndSolve.genSolutions;
-            if (isFromDB) {
-                loadMaze(true);
+            if (size != 0) {
+                if (isFromDB) {
+                    loadMaze(true);
+                }
+                else{
+                    reload(Save());
+                }
             }
-            else if (size != 0){
-                loadMaze(false);
-            }
-        }
-        else if (src == setEditable){
+
+        } else if (src == setEditable) {
             editable = !editable;
         }
     }
 
-    private boolean validateName(String title){
+    private boolean validateName(String title) {
         File file = new File(title);
         boolean created = false;
         try {
@@ -394,18 +407,55 @@ public class UserGUI extends JFrame implements ActionListener, Runnable{
     }
 
     public String Save() {
-        int width = Maze.maze.maze.length;
-        int height = Maze.maze.maze[0].length;
+        int width = genAndSolve.maze.length;
+        int height = genAndSolve.maze[0].length;
         String totalStates = "";
         String k;
         for (int i = 0; i < width; i++) {
             for (int j = 0; j < height; j++) {
                 k = String.valueOf(Maze.maze.maze[i][j]);
-                totalStates = totalStates.concat(k+",");
+                totalStates = totalStates.concat(k + ",");
             }
         }
         return totalStates;
     }
+
+    public static void reload(String reloadedMaze) {
+        isReloaded = true;
+        reloadStorage.clear();
+        String temp = genAndSolve.returnLogoCoordinates();
+        String[] idk = temp.split("[-]", 0);
+        ArrayList<Integer> retrievedPos = new ArrayList<>();
+        for (String myNextStr : idk) {
+            retrievedPos.add(Integer.valueOf(myNextStr));
+        }
+        reloadImageX = retrievedPos.get(0);
+        reloadImageY = retrievedPos.get(1);
+        String[] res = reloadedMaze.split("[,]", 0);
+        Collections.addAll(reloadStorage, res);
+        final Rectangle[] r = {pnlDisplay.getBounds()};
+        final Maze[] g = {new Maze(r[0].width, r[0].height)};
+        if (!genAndSolve.genSolutions){
+            int maxWidthCoord = genAndSolve.maze.length;
+            int maxHeightCoord = genAndSolve.maze[0].length;
+            for (int i = 0; i < maxWidthCoord; i++) { //x coordinate
+                for (int j = 0; j < maxHeightCoord; j++) { //y coordinate
+                    if (Objects.equals(String.valueOf(genAndSolve.maze[i][j]), "SOLUTION")) {
+                        genAndSolve.maze[i][j] = genAndSolve.state.PATH;
+                    }
+                }
+            }
+        }
+        pnlDisplay.removeAll();
+        pnlDisplay.add(g[0], BorderLayout.CENTER);
+        pnlDisplay.setVisible(true);
+        currentMaze = g[0];
+        pnlDisplay.revalidate();
+        pnlDisplay.repaint();
+        isReloaded = false;
+    }
+
+
 
     public static void loadMaze(Boolean fromDB){
         if (fromDB) {
@@ -426,7 +476,7 @@ public class UserGUI extends JFrame implements ActionListener, Runnable{
                 }
             }
         }
-        else {
+        else{
             final Rectangle[] r = {pnlDisplay.getBounds()};
             final Maze[] g = {new Maze(r[0].width, r[0].height)};
             r[0] = pnlDisplay.getBounds();
