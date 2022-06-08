@@ -130,8 +130,56 @@ public class UserGUI extends JFrame implements ActionListener, Runnable{
 
     public void actionPerformed(ActionEvent e) {
         Object src = e.getSource();
-        if (src == manGen){
-            // Insert Manual Generation Code Here
+        int mouseX = 0;
+        int mouseY = 0;
+        if (src == manGen){ //manual generation
+            isFromDB = false; //maze is not pulled from database
+            //create a new panel to determine the cell size
+            JPanel myPanel = new JPanel();
+            myPanel.add(new JLabel("Size:"));
+
+            Object[] possibilities = {"Small", "Medium", "Large"};
+            String s = (String)JOptionPane.showInputDialog(
+                    myPanel,
+                    "Please Select a Maze Size:\n",
+                    "Size Selector",
+                    JOptionPane.PLAIN_MESSAGE, null,
+                    possibilities,
+                    "ham");
+
+            // These sizes are arbitrary, if you find a way to make it so the overall maze dimensions don't change when changing maze size please do so.
+            if (Objects.equals(s, "Small")){
+                size = 40;
+            }
+            else if (Objects.equals(s, "Medium")){
+                size = 30;
+            }
+            else if (Objects.equals(s, "Large")) {
+                size = 20;
+            }
+            //
+            if ((s != null)) {
+                final Rectangle[] r = {pnlDisplay.getBounds()}; // In case window needs to become resizable, this code will accommodate
+                final Maze[] g = {new Maze(r[0].width, r[0].height)};
+                pnlDisplay.addMouseListener(new MouseAdapter() {
+                    @Override
+                    public void mouseClicked(MouseEvent c){
+                        int mouseX = c.getX();
+                        int mouseY = c.getY();
+
+                        System.out.println(mouseX + "," + mouseY);
+                    }
+                });
+                System.out.println();
+                //draw border
+                //draw start and finish
+                //on click - get pointer location DONE
+                    //make switch state of square
+                    //if in start,finish or border
+                        //do nothing
+                //on space - reset
+            }
+
         }
         else if (src == autoGen){
             isFromDB = false;
