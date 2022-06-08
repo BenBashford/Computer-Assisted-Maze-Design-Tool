@@ -37,6 +37,7 @@ public class UserGUI extends JFrame implements ActionListener, Runnable{
     private static int size;
 
     public static boolean isFromDB = false;
+    public static boolean editable = false;
 
 
     public static ArrayList<Point> savedDirections = new ArrayList<>();
@@ -55,6 +56,7 @@ public class UserGUI extends JFrame implements ActionListener, Runnable{
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLayout(new BorderLayout());
         setResizable(false);
+        boolean editable = false;
 
         pnlDisplay = createPanel(Color.WHITE);
         pnlDisplay.setLayout(new BorderLayout());
@@ -134,6 +136,7 @@ public class UserGUI extends JFrame implements ActionListener, Runnable{
         int mouseY = 0;
         if (src == manGen){ //manual generation
             isFromDB = false; //maze is not pulled from database
+            editable = true;
             //create a new panel to determine the cell size
             JPanel myPanel = new JPanel();
             myPanel.add(new JLabel("Size:"));
@@ -162,12 +165,13 @@ public class UserGUI extends JFrame implements ActionListener, Runnable{
                 final Rectangle[] r = {pnlDisplay.getBounds()}; // In case window needs to become resizable, this code will accommodate
                 final Maze[] g = {new Maze(r[0].width, r[0].height)};
                 pnlDisplay.addMouseListener(new MouseAdapter() {
-                    @Override
                     public void mouseClicked(MouseEvent c){
                         int mouseX = c.getX();
                         int mouseY = c.getY();
+                        if (editable){
+                            System.out.println(mouseX + "," + mouseY);
+                        }
 
-                        System.out.println(mouseX + "," + mouseY);
                     }
                 });
                 System.out.println();
@@ -183,6 +187,7 @@ public class UserGUI extends JFrame implements ActionListener, Runnable{
         }
         else if (src == autoGen){
             isFromDB = false;
+            editable = false;
             JPanel myPanel = new JPanel();
             myPanel.add(new JLabel("Size:"));
 
