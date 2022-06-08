@@ -6,6 +6,7 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
+import java.util.Collections;
 import javax.swing.table.DefaultTableModel;
 
 import static java.lang.Integer.parseInt;
@@ -107,22 +108,10 @@ public class databaseGUI extends JFrame implements ActionListener, Runnable {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        ArrayList<Integer> retrievedDirections = new ArrayList<>();
-        ArrayList<Point> convertedDirections = new ArrayList<>();
+        UserGUI.retrievedDirections.clear();
         String[] res = selectedMaze.split("[,]", 0);
-        for(String myStr: res) {
-            String[] idk = myStr.split("[-]", 0);
-            for (String myNextStr: idk){
-                retrievedDirections.add(Integer.valueOf(myNextStr));
-            }
-        }
-        for(int n = 0; n < retrievedDirections.size(); n = n+2) {
-            Point temp = new Point(retrievedDirections.get(n), retrievedDirections.get(n + 1));
-            convertedDirections.add(temp);
-        }
+        Collections.addAll(UserGUI.retrievedDirections, res);
         UserGUI.isFromDB = true;
-        UserGUI.retrievedPoints = convertedDirections;
-        UserGUI.isReprint = false;
         UserGUI.isManual = false;
         UserGUI.loadMaze(true);
     }

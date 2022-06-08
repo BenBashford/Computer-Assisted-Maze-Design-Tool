@@ -72,11 +72,9 @@ public class imageInsert {
                         if (Objects.equals(s, "Start")) {
                             genAndSolve.mazeStartImage = (new ImageIcon(inputImage));
                             startPath = path;
-                            UserGUI.loadMaze(false);
                         } else if (Objects.equals(s, "End")) {
                             endPath = path;
                             genAndSolve.mazeEndImage = (new ImageIcon(inputImage));
-                            UserGUI.loadMaze(false);
                         }
 
                     }
@@ -118,7 +116,6 @@ public class imageInsert {
                 else{
                     genAndSolve.mazeStartImage = null;
                     startPath = null;
-                    UserGUI.loadMaze(false);
                 }
             } else if (Objects.equals(s, "End")) {
                 if (genAndSolve.mazeEndImage == null) {
@@ -127,7 +124,6 @@ public class imageInsert {
                 else{
                     genAndSolve.mazeEndImage = null;
                     endPath = null;
-                    UserGUI.loadMaze(false);
                 }
             } else if (Objects.equals(s, "Logo")) {
                 if (genAndSolve.logo == null) {
@@ -137,7 +133,6 @@ public class imageInsert {
                     genAndSolve.logo = null;
                     UserGUI.isLogo = false;
                     logoPath = null;
-                    UserGUI.loadMaze(false);
                 }
 
             }

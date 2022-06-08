@@ -40,17 +40,15 @@ public class genAndSolve {
     // start and end of maze
     private Point start;
     private Point end;
-    public int p;
+//    public int p;
 
     private static int ranX;
     private static int ranY;
 
-    private boolean isSolution;
 
     public genAndSolve(int width, int height, int size) {
-        isSolution = false;
         imgSize = 0;
-        p = 0;
+//        p = 0;
         size = Math.abs(size);
         columns = Math.abs(width) / size;
         rows = Math.abs(height) / size;
@@ -68,24 +66,16 @@ public class genAndSolve {
             randomX = databaseGUI.returnLogoPos(0);
             randomY = databaseGUI.returnLogoPos(1);
         }
-        else if (UserGUI.returnIsReprint() && UserGUI.isLogo){
-            randomX = UserGUI.storedXY.get(0);
-            randomY = UserGUI.storedXY.get(1);
-        }
         else{
             randomX = xLowerBound + 2*(int)(Math.random()*((xUpperBound-xLowerBound)/2+1));
             randomY = yLowerBound + 2*(int)(Math.random()*((yUpperBound-yLowerBound)/2+1));
-            UserGUI.storedXY.add(randomX);
-            UserGUI.storedXY.add(randomY);
         }
 
 
         configure();
-        if (!UserGUI.isManual){
         generate();
         if (genSolutions) {
             solve();
-        }
         }
     }
 
@@ -126,17 +116,6 @@ public class genAndSolve {
         Point temp = options[rand];
 
 
-        if (UserGUI.isFromDB && !isSolution) {
-            temp = UserGUI.retrievedPoints.get(p);
-        }
-
-        if (UserGUI.returnIsReprint() && !isSolution){
-            temp = UserGUI.savedDirections.get(p);
-        }
-
-        UserGUI.savedDirections.add(temp);
-
-        p++;
 
         return temp; // return the random neighbor
 
@@ -195,30 +174,6 @@ public class genAndSolve {
                imgSize = 9;
            }
        }
-
-       if (databaseGUI.hasLogo && UserGUI.isFromDB){
-           if (databaseGUI.returnLogoSize() == 1){
-               maze[randomX][randomY] = state.IMAGE;
-           }
-           else if (databaseGUI.returnLogoSize() == 3){
-               int x,y;
-               for (x = 0; x < 3; x++) {
-                   for (y = 0; y < 3; y++) {
-                       maze[randomX+x][randomY+y] = state.IMAGE;
-                   }
-               }
-           }
-           else if (databaseGUI.returnLogoSize() == 5){
-               int x,y;
-               for (x = 0; x < 5; x++) {
-                   for (y = 0; y < 5; y++) {
-                       maze[randomX+x][randomY+y] = state.IMAGE;
-                   }
-               }
-           }
-        }
-
-
     }
 
     private void generate() {
@@ -226,24 +181,7 @@ public class genAndSolve {
         Stack<Point> history = new Stack<Point>();
 
         int nToVisit;
-        if (UserGUI.isFromDB) {
-            if (databaseGUI.hasLogo) {
-                if (databaseGUI.returnLogoSize() == 1) {
-                    nToVisit = ((columns - 1) * (rows - 1) / 4) - 1;
-                } else if (databaseGUI.returnLogoSize() == 3) {
-                    nToVisit = ((columns - 1) * (rows - 1) / 4) - 4;
-                } else {
-                    nToVisit = ((columns - 1) * (rows - 1) / 4) - 9;
-                }
-            }
-            else{
-                nToVisit = ((columns - 1) * (rows - 1) / 4);
-            }
-
-        }
-        else{
-            nToVisit = ((columns - 1) * (rows - 1) / 4) - imgSize ;
-        }
+        nToVisit = ((columns - 1) * (rows - 1) / 4) - imgSize ;
         int nVisited = 1;
 
         current = new Point(start.x + 1, start.y);
@@ -268,7 +206,6 @@ public class genAndSolve {
     }
 
     private void solve() {
-        isSolution = true;
         Point current, next;
         Stack<Point> history = new Stack<Point>();
 
