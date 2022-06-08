@@ -165,14 +165,17 @@ public class UserGUI extends JFrame implements ActionListener, Runnable{
                 final Rectangle[] r = {pnlDisplay.getBounds()}; // In case window needs to become resizable, this code will accommodate
                 final Maze[] g = {new Maze(r[0].width, r[0].height)};
                 pnlDisplay.addMouseListener(new MouseAdapter() {
-                    public void mouseClicked(MouseEvent c){
-                        int mouseX = c.getX();
-                        int mouseY = c.getY();
-                        if (editable){
+                    public void mouseClicked(MouseEvent c) {
+                        if (editable) {
+                            int mouseX = c.getX();
+                            int mouseY = c.getY();
                             System.out.println(mouseX + "," + mouseY);
+                            int coordX = mouseX/size;
+                            int coordY = mouseY/size;
+                            System.out.println(coordX + ", " + coordY);
                         }
-
                     }
+
                 });
                 System.out.println();
                 //draw border
