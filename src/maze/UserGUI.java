@@ -163,25 +163,46 @@ public class UserGUI extends JFrame implements ActionListener, Runnable{
             //
             if ((s != null)) {
                 final Rectangle[] r = {pnlDisplay.getBounds()}; // In case window needs to become resizable, this code will accommodate
-                final Maze[] g = {new Maze(r[0].width, r[0].height)};
+                //genAndSolve[] a = {new genAndSolve(r[0].width,r[0].height,size)};
+                Maze[] g = {new Maze(r[0].width, r[0].height)};
+                int maxWidthCoord = r[0].width/size;
+                int maxHeightCoord = r[0].height/size;
+                pnlDisplay.removeAll();
+                pnlDisplay.add(g[0], BorderLayout.CENTER);
+                //pnlDisplay.setVisible(true);
+                currentMaze = g[0];
+
                 pnlDisplay.addMouseListener(new MouseAdapter() {
                     public void mouseClicked(MouseEvent c) {
-                        if (editable) {
-                            int mouseX = c.getX();
-                            int mouseY = c.getY();
-                            System.out.println(mouseX + "," + mouseY);
-                            int coordX = mouseX/size;
-                            int coordY = mouseY/size;
-                            System.out.println(coordX + ", " + coordY);
+                        if (editable) { //check if the maze is editable
+                            pnlDisplay.removeAll();
+                            int coordX = c.getX()/size; //get the x coordinate of the mouse
+                            int coordY = c.getY()/size; //get the y coordinate of the mouse
+
+                            if (String.valueOf(g[0].maze.maze[coordX][coordY]) == "WALL" && coordX != 0 && coordY != 0 && coordX < maxWidthCoord-1 && coordY < maxHeightCoord-1) {
+                                g[0].maze.maze[coordX][coordY] = genAndSolve.state.PATH;
+                                currentMaze = g[0];
+
+                                pnlDisplay.add(currentMaze, BorderLayout.CENTER);
+                                pnlDisplay.revalidate();
+                                pnlDisplay.repaint();
+
+                            }
+                            else if (String.valueOf(g[0].maze.maze[coordX][coordY]) == "PATH" && coordX < maxWidthCoord-1 && coordY < maxHeightCoord-1) {
+                                g[0].maze.maze[coordX][coordY] = genAndSolve.state.WALL;
+                                currentMaze = g[0];
+                                pnlDisplay.add(currentMaze, BorderLayout.CENTER);
+                                pnlDisplay.revalidate();
+                                pnlDisplay.repaint();
+
+                            }
                         }
                     }
 
                 });
-                System.out.println();
-                //draw border
-                //draw start and finish
-                //on click - get pointer location DONE
-                    //make switch state of square
+
+                pnlDisplay.revalidate();
+                pnlDisplay.repaint();
                     //if in start,finish or border
                         //do nothing
                 //on space - reset

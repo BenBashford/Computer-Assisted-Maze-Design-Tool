@@ -19,7 +19,7 @@ public class genAndSolve {
     private int yLowerBound;
     private int yUpperBound;
 
-    private enum state {
+    public enum state {
         WALL,
         PATH,
         PLACEHOLDER,
@@ -35,7 +35,7 @@ public class genAndSolve {
     public static int imgSize;
 
     // main data structure
-    private state[][] maze;
+    public state[][] maze;
 
     // start and end of maze
     private Point start;
