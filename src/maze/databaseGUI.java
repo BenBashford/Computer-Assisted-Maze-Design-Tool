@@ -123,6 +123,7 @@ public class databaseGUI extends JFrame implements ActionListener, Runnable {
         UserGUI.isFromDB = true;
         UserGUI.retrievedPoints = convertedDirections;
         UserGUI.isReprint = false;
+        UserGUI.isManual = false;
         UserGUI.loadMaze(true);
     }
 

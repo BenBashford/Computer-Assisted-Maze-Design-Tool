@@ -35,6 +35,7 @@ public class UserGUI extends JFrame implements ActionListener, Runnable{
     private JMenuItem open;
     private JToggleButton mazeSolutions;
     public static int size;
+    public static boolean isManual;
 
 
 
@@ -168,6 +169,8 @@ public class UserGUI extends JFrame implements ActionListener, Runnable{
             }
             //
             if ((s != null)) {
+                isManual = true;
+                savedDirections.clear();
                 final Rectangle[] r = {pnlDisplay.getBounds()}; // In case window needs to become resizable, this code will accommodate
                 Maze[] g = {new Maze(r[0].width, r[0].height)};
                 int maxWidthCoord = g[0].maze.maze.length;
@@ -177,20 +180,12 @@ public class UserGUI extends JFrame implements ActionListener, Runnable{
                 pnlDisplay.add(g[0], BorderLayout.CENTER);
                 pnlDisplay.setVisible(true);
                 currentMaze = g[0];
+                Point initial = new Point(1,1);
+                savedDirections.add(initial);
                 //double for loop deleting the whole maze
-                for (int i = 0; i < maxWidthCoord;i++){ //x coordinate
-                    for (int j = 0; j < maxHeightCoord;j++){ //y coordinate
-                        if ((i * j == 0) || (i == maxWidthCoord-1 || j == maxHeightCoord-1)){
-                            g[0].maze.maze[i][j] = genAndSolve.state.WALL; //place walls around the border
-                        }
-                        else{
-                            g[0].maze.maze[i][j] = genAndSolve.state.PATH; //fill the center with paths
-                        }
-
-                    }
-                }
                 if (pnlDisplay.getMouseListeners().length == 0) {
                     pnlDisplay.addMouseListener(new MouseAdapter() {
+                        int n = 0;
                         public void mouseClicked(MouseEvent c) {
                             if (editable) { //check if the maze is editable
                                 pnlDisplay.removeAll();
@@ -198,11 +193,44 @@ public class UserGUI extends JFrame implements ActionListener, Runnable{
                                 int coordY = c.getY() / size; //get the y coordinate of the mouse
                                 System.out.println(coordX + ", " + coordY + " " + String.valueOf(g[0].maze.maze[coordX][coordY]));
                                 System.out.println(pnlDisplay.getMouseListeners().length);
-                                if (String.valueOf(g[0].maze.maze[coordX][coordY]) == "WALL" && coordX != 0 && coordY != 0 && coordX < maxWidthCoord - 1 && coordY < maxHeightCoord - 1) {
-                                    g[0].maze.maze[coordX][coordY] = genAndSolve.state.PATH;
-                                } else if (String.valueOf(g[0].maze.maze[coordX][coordY]) == "PATH" && coordX < maxWidthCoord - 1 && coordY < maxHeightCoord - 1) {
-                                    g[0].maze.maze[coordX][coordY] = genAndSolve.state.WALL;
+                                boolean genTest = (coordX % 2 == 1 && coordY % 2 == 1);
+
+                                ArrayList<Point>  options =  new ArrayList<>();
+                                options.add(new Point(savedDirections.get(n).x, savedDirections.get(n).y + 2));
+                                options.add(new Point(savedDirections.get(n).x, savedDirections.get(n).y - 2));
+                                options.add(new Point(savedDirections.get(n).x + 2, savedDirections.get(n).y));
+                                options.add(new Point(savedDirections.get(n).x - 2, savedDirections.get(n).y));
+
+                                if (String.valueOf(g[0].maze.maze[coordX][coordY]) == "PLACEHOLDER" && coordX != 0 && coordY != 0 && coordX < maxWidthCoord - 1 && coordY < maxHeightCoord - 1 && genTest) {
+                                    if (options.contains(new Point (coordX, coordY))) {
+                                        System.out.println("L");
+                                        if (coordY > savedDirections.get(n).y) {
+                                            g[0].maze.maze[coordX][coordY-1] = genAndSolve.state.PATH;
+                                            Point temp = new Point(coordX, coordY);
+                                            savedDirections.add(temp);
+                                        } else if (coordY < savedDirections.get(n).y){
+                                            g[0].maze.maze[coordX][coordY +1] = genAndSolve.state.PATH;
+                                            Point temp = new Point(coordX, coordY);
+                                            savedDirections.add(temp);
+                                        }
+                                        else if (coordX > savedDirections.get(n).x){
+                                            g[0].maze.maze[coordX-1][coordY] = genAndSolve.state.PATH;
+                                            Point temp = new Point(coordX, coordY);
+                                            savedDirections.add(temp);
+                                        }
+                                        else if (coordX < savedDirections.get(n).y){
+                                            g[0].maze.maze[coordX+1][coordY] = genAndSolve.state.PATH;
+                                            Point temp = new Point(coordX, coordY);
+                                            savedDirections.add(temp);
+                                        }
+                                        n++;
+                                    }
+                                   
+
                                 }
+//                                else if (String.valueOf(g[0].maze.maze[coordX][coordY]) == "PATH" && coordX < maxWidthCoord - 1 && coordY < maxHeightCoord - 1  && genTest) {
+//                                    g[0].maze.maze[coordX][coordY] = genAndSolve.state.PATH;
+//                                }
                                 pnlDisplay.removeAll();
                                 pnlDisplay.add(g[0], BorderLayout.CENTER);
                                 pnlDisplay.revalidate();
@@ -222,7 +250,7 @@ public class UserGUI extends JFrame implements ActionListener, Runnable{
         }
         else if (src == autoGen){
             isFromDB = false;
-
+            isManual = false;
             isReprint = false;
             savedDirections.clear();
             storedXY.clear();

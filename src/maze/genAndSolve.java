@@ -81,9 +81,11 @@ public class genAndSolve {
 
 
         configure();
+        if (!UserGUI.isManual){
         generate();
         if (genSolutions) {
-        solve();
+            solve();
+        }
         }
     }
 
