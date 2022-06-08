@@ -132,8 +132,6 @@ public class UserGUI extends JFrame implements ActionListener, Runnable{
 
     public void actionPerformed(ActionEvent e) {
         Object src = e.getSource();
-        int mouseX = 0;
-        int mouseY = 0;
         if (src == manGen){ //manual generation
             isFromDB = false; //maze is not pulled from database
             editable = true;
@@ -163,14 +161,26 @@ public class UserGUI extends JFrame implements ActionListener, Runnable{
             //
             if ((s != null)) {
                 final Rectangle[] r = {pnlDisplay.getBounds()}; // In case window needs to become resizable, this code will accommodate
-                //genAndSolve[] a = {new genAndSolve(r[0].width,r[0].height,size)};
                 Maze[] g = {new Maze(r[0].width, r[0].height)};
-                int maxWidthCoord = r[0].width/size;
-                int maxHeightCoord = r[0].height/size;
+                int maxWidthCoord = g[0].maze.maze.length;
+                int maxHeightCoord = g[0].maze.maze[0].length;
+
                 pnlDisplay.removeAll();
                 pnlDisplay.add(g[0], BorderLayout.CENTER);
-                //pnlDisplay.setVisible(true);
+                pnlDisplay.setVisible(true);
                 currentMaze = g[0];
+                //double for loop deleting the whole maze
+                for (int i = 0; i < maxWidthCoord;i++){ //x coordinate
+                    for (int j = 0; j < maxHeightCoord;j++){ //y coordinate
+                        if ((i * j == 0) || (i == maxWidthCoord-1 || j == maxHeightCoord-1)){
+                            g[0].maze.maze[i][j] = genAndSolve.state.WALL; //place walls around the border
+                        }
+                        else{
+                            g[0].maze.maze[i][j] = genAndSolve.state.PATH; //fill the center with paths
+                        }
+
+                    }
+                }
 
                 pnlDisplay.addMouseListener(new MouseAdapter() {
                     public void mouseClicked(MouseEvent c) {
@@ -178,33 +188,26 @@ public class UserGUI extends JFrame implements ActionListener, Runnable{
                             pnlDisplay.removeAll();
                             int coordX = c.getX()/size; //get the x coordinate of the mouse
                             int coordY = c.getY()/size; //get the y coordinate of the mouse
-
+                            System.out.println(coordX + ", " + coordY + " " + String.valueOf(g[0].maze.maze[coordX][coordY]));
                             if (String.valueOf(g[0].maze.maze[coordX][coordY]) == "WALL" && coordX != 0 && coordY != 0 && coordX < maxWidthCoord-1 && coordY < maxHeightCoord-1) {
                                 g[0].maze.maze[coordX][coordY] = genAndSolve.state.PATH;
                                 currentMaze = g[0];
-
-                                pnlDisplay.add(currentMaze, BorderLayout.CENTER);
-                                pnlDisplay.revalidate();
-                                pnlDisplay.repaint();
-
                             }
                             else if (String.valueOf(g[0].maze.maze[coordX][coordY]) == "PATH" && coordX < maxWidthCoord-1 && coordY < maxHeightCoord-1) {
                                 g[0].maze.maze[coordX][coordY] = genAndSolve.state.WALL;
                                 currentMaze = g[0];
-                                pnlDisplay.add(currentMaze, BorderLayout.CENTER);
-                                pnlDisplay.revalidate();
-                                pnlDisplay.repaint();
-
                             }
+                            pnlDisplay.removeAll();
+                            pnlDisplay.add(currentMaze, BorderLayout.CENTER);
+                            pnlDisplay.revalidate();
+                            pnlDisplay.repaint();
                         }
                     }
 
                 });
-
                 pnlDisplay.revalidate();
                 pnlDisplay.repaint();
-                    //if in start,finish or border
-                        //do nothing
+
                 //on space - reset
             }
 
