@@ -440,7 +440,7 @@ public class UserGUI extends JFrame implements ActionListener, Runnable {
             int maxHeightCoord = genAndSolve.maze[0].length;
             for (int i = 0; i < maxWidthCoord; i++) { //x coordinate
                 for (int j = 0; j < maxHeightCoord; j++) { //y coordinate
-                    if (Objects.equals(String.valueOf(genAndSolve.maze[i][j]), "SOLUTION")) {
+                    if (Objects.equals(String.valueOf(genAndSolve.maze[i][j]), "SOLUTION") || (Objects.equals(String.valueOf(genAndSolve.maze[i][j]), "PLACEHOLDER"))) {
                         genAndSolve.maze[i][j] = genAndSolve.state.PATH;
                     }
                 }
