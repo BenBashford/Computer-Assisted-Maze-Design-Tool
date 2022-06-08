@@ -45,7 +45,10 @@ public class genAndSolve {
     private static int ranX;
     private static int ranY;
 
+    private boolean isSolution;
+
     public genAndSolve(int width, int height, int size) {
+        isSolution = false;
         imgSize = 0;
         p = 0;
         size = Math.abs(size);
@@ -65,9 +68,15 @@ public class genAndSolve {
             randomX = databaseGUI.returnLogoPos(0);
             randomY = databaseGUI.returnLogoPos(1);
         }
+        else if (UserGUI.returnIsReprint() && UserGUI.isLogo){
+            randomX = UserGUI.storedXY.get(0);
+            randomY = UserGUI.storedXY.get(1);
+        }
         else{
             randomX = xLowerBound + 2*(int)(Math.random()*((xUpperBound-xLowerBound)/2+1));
             randomY = yLowerBound + 2*(int)(Math.random()*((yUpperBound-yLowerBound)/2+1));
+            UserGUI.storedXY.add(randomX);
+            UserGUI.storedXY.add(randomY);
         }
 
 
@@ -115,11 +124,15 @@ public class genAndSolve {
         Point temp = options[rand];
 
 
-        if (UserGUI.isFromDB) {
+        if (UserGUI.isFromDB && !isSolution) {
             temp = UserGUI.retrievedPoints.get(p);
         }
-        UserGUI.savedDirections.add(temp);
 
+        if (UserGUI.returnIsReprint() && !isSolution){
+            temp = UserGUI.savedDirections.get(p);
+        }
+
+        UserGUI.savedDirections.add(temp);
 
         p++;
 
@@ -156,7 +169,7 @@ public class genAndSolve {
             }
         }
 
-       if (UserGUI.returnIsLogo()) {
+       if (UserGUI.isLogo) {
            if (imageInsert.logoSize == 1) {
                maze[randomX][randomY] = state.IMAGE;
                imgSize = 1; // Number of PLACEHOLDER states replaced with IMAGE states
@@ -181,7 +194,7 @@ public class genAndSolve {
            }
        }
 
-       if (databaseGUI.hasLogo){
+       if (databaseGUI.hasLogo && UserGUI.isFromDB){
            if (databaseGUI.returnLogoSize() == 1){
                maze[randomX][randomY] = state.IMAGE;
            }
@@ -253,6 +266,7 @@ public class genAndSolve {
     }
 
     private void solve() {
+        isSolution = true;
         Point current, next;
         Stack<Point> history = new Stack<Point>();
 
@@ -266,6 +280,7 @@ public class genAndSolve {
                 history.push(current);
                 current = next;
                 maze[current.x][current.y] = state.SOLUTION;
+
             } else if (!history.empty()) {
                 maze[current.x][current.y] = state.PLACEHOLDER;
                 current = history.pop();

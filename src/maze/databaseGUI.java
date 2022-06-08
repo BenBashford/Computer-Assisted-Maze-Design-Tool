@@ -69,7 +69,6 @@ public class databaseGUI extends JFrame implements ActionListener, Runnable {
                     }
                     selectedLogoX = retrievedPos.get(0);
                     selectedLogoY = retrievedPos.get(1);
-                    System.out.println(selectedLogoX);
 
                     String tempLogoSize = (String) tm.getValueAt(row[0], 7);
                     selectedLogoSize = parseInt (tempLogoSize);
@@ -123,6 +122,7 @@ public class databaseGUI extends JFrame implements ActionListener, Runnable {
         }
         UserGUI.isFromDB = true;
         UserGUI.retrievedPoints = convertedDirections;
+        UserGUI.isReprint = false;
         UserGUI.loadMaze(true);
     }
 
@@ -151,6 +151,7 @@ public class databaseGUI extends JFrame implements ActionListener, Runnable {
     public static String returnTitle(){
         return selectedTitle;
     }
+
 
 
     public databaseGUI(String title) throws HeadlessException{
