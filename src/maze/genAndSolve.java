@@ -9,7 +9,7 @@ public class genAndSolve {
     public static boolean genSolutions;
     private static int rows;
     private static int columns;
-    public int cellSize;
+    private int cellSize;
 
     private static int randomX;
     private static int randomY;
