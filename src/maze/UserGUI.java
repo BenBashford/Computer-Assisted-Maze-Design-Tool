@@ -329,7 +329,6 @@ public class UserGUI extends JFrame implements ActionListener, Runnable {
                 }
                 else {
                     reload(Save());
-                    System.out.println("Test");
                 }
             }
 
@@ -502,6 +501,7 @@ public class UserGUI extends JFrame implements ActionListener, Runnable {
             ml = (new MouseAdapter() {
                 public void mouseClicked(MouseEvent c) {
                     if (editable) { //check if the maze is editable
+
                         pnlDisplay.removeAll();
                         int coordX = c.getX() / size; //get the x coordinate of the mouse
                         int coordY = c.getY() / size; //get the y coordinate of the mouse
@@ -513,6 +513,8 @@ public class UserGUI extends JFrame implements ActionListener, Runnable {
                         }
                         pnlDisplay.removeAll();
                         pnlDisplay.add(g[0], BorderLayout.CENTER);
+                        pnlDisplay.revalidate();
+                        pnlDisplay.repaint();
                     }
 
                 }
