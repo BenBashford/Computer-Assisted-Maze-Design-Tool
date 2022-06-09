@@ -190,6 +190,14 @@ public class UserGUI extends JFrame implements ActionListener, Runnable {
 
                     }
                 }
+<<<<<<< Updated upstream
+=======
+                pnlDisplay.removeAll();
+                pnlDisplay.add(g[0], BorderLayout.CENTER);
+                pnlDisplay.revalidate();
+                pnlDisplay.repaint();
+
+>>>>>>> Stashed changes
                 if (pnlDisplay.getMouseListeners().length == 1) {
                     pnlDisplay.removeMouseListener(ml);
                 }
@@ -216,8 +224,12 @@ public class UserGUI extends JFrame implements ActionListener, Runnable {
                     });
                     pnlDisplay.addMouseListener(ml);
                 }
+<<<<<<< Updated upstream
                 pnlDisplay.revalidate();
                 pnlDisplay.repaint();
+=======
+
+>>>>>>> Stashed changes
             }
 
         } else if (src == autoGen) {
@@ -490,14 +502,20 @@ public class UserGUI extends JFrame implements ActionListener, Runnable {
         pnlDisplay.repaint();
         int maxWidthCoord = genAndSolve.maze.length;
         int maxHeightCoord = genAndSolve.maze[0].length;
+        if (pnlDisplay.getMouseListeners().length == 1) {
+            pnlDisplay.removeMouseListener(ml);
+        }
         if (pnlDisplay.getMouseListeners().length == 0) {
-            pnlDisplay.addMouseListener(new MouseAdapter() {
+            ml = (new MouseAdapter() {
                 public void mouseClicked(MouseEvent c) {
                     if (editable) { //check if the maze is editable
                         pnlDisplay.removeAll();
                         int coordX = c.getX() / size; //get the x coordinate of the mouse
                         int coordY = c.getY() / size; //get the y coordinate of the mouse
+<<<<<<< Updated upstream
 
+=======
+>>>>>>> Stashed changes
                         if (String.valueOf(genAndSolve.maze[coordX][coordY]) == "WALL" && coordX != 0 && coordY != 0 && coordX < maxWidthCoord - 1 && coordY < maxHeightCoord - 1) {
                             genAndSolve.maze[coordX][coordY] = genAndSolve.state.PATH;
                         } else if (String.valueOf(genAndSolve.maze[coordX][coordY]) == "PATH" && coordX < maxWidthCoord - 1 && coordY < maxHeightCoord - 1) {
@@ -508,10 +526,14 @@ public class UserGUI extends JFrame implements ActionListener, Runnable {
                         pnlDisplay.revalidate();
                         pnlDisplay.repaint();
                     }
+<<<<<<< Updated upstream
 
+=======
+>>>>>>> Stashed changes
                 }
 
             });
+            pnlDisplay.addMouseListener(ml);
         }
     }
 
