@@ -270,15 +270,17 @@ public class UserGUI extends JFrame implements ActionListener, Runnable {
                 pnlDisplay.repaint();
                 int maxWidthCoord = Maze.maze.maze.length;
                 int maxHeightCoord = Maze.maze.maze[0].length;
+                if (pnlDisplay.getMouseListeners().length == 1) {
+                    pnlDisplay.removeMouseListener(ml);
+                }
                 if (pnlDisplay.getMouseListeners().length == 0) {
-                    pnlDisplay.addMouseListener(new MouseAdapter() {
+                    ml = (new MouseAdapter() {
                         public void mouseClicked(MouseEvent c) {
                             if (editable) { //check if the maze is editable
                                 pnlDisplay.removeAll();
                                 int coordX = c.getX() / size; //get the x coordinate of the mouse
                                 int coordY = c.getY() / size; //get the y coordinate of the mouse
-//                                System.out.println(coordX + ", " + coordY + " " + String.valueOf(Maze.maze.maze[coordX][coordY]));
-//                                System.out.println(pnlDisplay.getMouseListeners().length);
+
                                 if (String.valueOf(Maze.maze.maze[coordX][coordY]) == "WALL" && coordX != 0 && coordY != 0 && coordX < maxWidthCoord - 1 && coordY < maxHeightCoord - 1) {
                                     Maze.maze.maze[coordX][coordY] = genAndSolve.state.PATH;
                                 } else if (String.valueOf(Maze.maze.maze[coordX][coordY]) == "PATH" && coordX < maxWidthCoord - 1 && coordY < maxHeightCoord - 1) {
@@ -289,17 +291,16 @@ public class UserGUI extends JFrame implements ActionListener, Runnable {
                                 pnlDisplay.revalidate();
                                 pnlDisplay.repaint();
                             }
-//                                else if (String.valueOf(g[0].maze.maze[coordX][coordY]) == "PATH" && coordX < maxWidthCoord - 1 && coordY < maxHeightCoord - 1  && genTest) {
-//                                    g[0].maze.maze[coordX][coordY] = genAndSolve.state.PATH;
-//                                }
                             pnlDisplay.removeAll();
                             pnlDisplay.add(g[0], BorderLayout.CENTER);
                             pnlDisplay.revalidate();
                             pnlDisplay.repaint();
                         }
-
                     });
+                    pnlDisplay.addMouseListener(ml);
                 }
+                pnlDisplay.revalidate();
+                pnlDisplay.repaint();
             }
         } else if (src == logoAdd) {
             isLogo = true;
