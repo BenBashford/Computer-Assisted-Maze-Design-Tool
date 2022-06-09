@@ -227,10 +227,8 @@ public class genAndSolve {
 
         current = new Point(start.x + 1, start.y);
         maze[current.x][current.y] = state.SOLUTION;
-
         while (current.x != end.x -1 || current.y != end.y) {
             next = checkNext(current, state.PATH, 1);
-
             if (next != null) {
                 history.push(current);
                 current = next;
@@ -239,6 +237,11 @@ public class genAndSolve {
             } else if (!history.empty()) {
                 maze[current.x][current.y] = state.PLACEHOLDER;
                 current = history.pop();
+            }
+            else{
+                maze[start.x + 1][start.y] = state.PATH;
+                JOptionPane.showMessageDialog(null, "Maze Has No Solution", "Error", JOptionPane.INFORMATION_MESSAGE);
+                break;
             }
 
         }
