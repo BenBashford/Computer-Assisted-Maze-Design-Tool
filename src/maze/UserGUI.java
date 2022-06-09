@@ -191,12 +191,8 @@ public class UserGUI extends JFrame implements ActionListener, Runnable {
                     }
                 }
 
-                pnlDisplay.removeAll();
-                pnlDisplay.add(g[0], BorderLayout.CENTER);
                 pnlDisplay.revalidate();
                 pnlDisplay.repaint();
-
-
                 if (pnlDisplay.getMouseListeners().length == 1) {
                     pnlDisplay.removeMouseListener(ml);
                 }
@@ -223,8 +219,7 @@ public class UserGUI extends JFrame implements ActionListener, Runnable {
                     });
                     pnlDisplay.addMouseListener(ml);
                 }
-                pnlDisplay.revalidate();
-                pnlDisplay.repaint();
+
 
             }
 
@@ -299,8 +294,6 @@ public class UserGUI extends JFrame implements ActionListener, Runnable {
                     });
                     pnlDisplay.addMouseListener(ml);
                 }
-                pnlDisplay.revalidate();
-                pnlDisplay.repaint();
             }
         } else if (src == logoAdd) {
             isLogo = true;
