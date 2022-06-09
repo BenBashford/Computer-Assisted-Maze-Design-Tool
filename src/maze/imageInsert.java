@@ -86,7 +86,7 @@ public class imageInsert {
             }
         }
         else if (UserGUI.isFromDB){
-            JOptionPane.showMessageDialog(null, "Updating Stored Mazes Is Not Currently Supported", "Error", JOptionPane.INFORMATION_MESSAGE);
+            JOptionPane.showMessageDialog(null, "Adding Image/s to Stored Maze is Not Currently Supported", "Error", JOptionPane.INFORMATION_MESSAGE);
         }
         else if (UserGUI.size == 0){
             JOptionPane.showMessageDialog(null, "Please Generate a Maze First", "Error", JOptionPane.INFORMATION_MESSAGE);
@@ -138,7 +138,7 @@ public class imageInsert {
             }
         }
         else if (UserGUI.isFromDB){
-            JOptionPane.showMessageDialog(null, "Updating Stored Mazes Is Not Currently Supported", "Error", JOptionPane.INFORMATION_MESSAGE);
+            JOptionPane.showMessageDialog(null, "Removing Image/s from Stored Maze is Not Currently Supported", "Error", JOptionPane.INFORMATION_MESSAGE);
         }
         else if (UserGUI.size == 0){
             JOptionPane.showMessageDialog(null, "Please Generate a Maze First", "Error", JOptionPane.INFORMATION_MESSAGE);

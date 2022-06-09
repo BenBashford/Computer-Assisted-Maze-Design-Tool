@@ -115,6 +115,27 @@ public class databaseStorage {
         // Insert maze into database
     }
 
+    public static void updateMaze(String title, String maze) throws SQLException, FileNotFoundException {
+        File image = new File("src/images/MazeImages/"+title+"-Screenshot.png");
+        FileInputStream inputStream = new FileInputStream(image);
+        Connection conn = null;
+        try {
+            conn = DriverManager.getConnection(url);
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+        try (PreparedStatement pstmt = conn.prepareStatement("UPDATE Mazes SET Edited = datetime('now', 'localtime'), Image = ?, Maze = ? WHERE Title = ?")) {
+            pstmt.setBinaryStream(1, inputStream, (int) (image.length()));
+            pstmt.setString(2, maze);
+            pstmt.setString(3, title);
+            pstmt.executeUpdate();
+
+        }
+        catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
     public static String[][] retrieveMaze(){
         Connection conn = null;
         ArrayList<ArrayList<String>> data = new ArrayList();

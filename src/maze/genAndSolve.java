@@ -61,7 +61,7 @@ public class genAndSolve {
         xUpperBound = (columns-7);
         yLowerBound = (3);
         yUpperBound = (rows-7);
-        if ((UserGUI.isFromDB && databaseGUI.hasLogo && !UserGUI.isReloaded)){
+        if (UserGUI.isFromDB && databaseGUI.hasLogo){
             randomX = databaseGUI.returnLogoPos(0);
             randomY = databaseGUI.returnLogoPos(1);
         }
