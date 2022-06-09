@@ -39,6 +39,7 @@ public class UserGUI extends JFrame implements ActionListener, Runnable {
     private JToggleButton setEditable;
     public static int size;
     public static boolean isManual;
+    public static MouseListener ml = null;
 
 
     public static boolean isFromDB = false;
@@ -171,8 +172,8 @@ public class UserGUI extends JFrame implements ActionListener, Runnable {
                 isManual = true;
                 final Rectangle[] r = {pnlDisplay.getBounds()}; // In case window needs to become resizable, this code will accommodate
                 Maze[] g = {new Maze(r[0].width, r[0].height)};
-                int maxWidthCoord = genAndSolve.maze.length;
-                int maxHeightCoord = genAndSolve.maze[0].length;
+                int maxWidthCoord = Maze.maze.maze.length;
+                int maxHeightCoord = Maze.maze.maze[0].length;
 
                 pnlDisplay.removeAll();
                 pnlDisplay.add(g[0], BorderLayout.CENTER);
@@ -182,47 +183,46 @@ public class UserGUI extends JFrame implements ActionListener, Runnable {
                 for (int i = 0; i < maxWidthCoord; i++) { //x coordinate
                     for (int j = 0; j < maxHeightCoord; j++) { //y coordinate
                         if ((i * j == 0) || (i == maxWidthCoord - 1 || j == maxHeightCoord - 1)) {
-                            genAndSolve.maze[i][j] = genAndSolve.state.WALL; //place walls around the border
+                            Maze.maze.maze[i][j] = genAndSolve.state.WALL; //place walls around the border
                         } else {
-                            genAndSolve.maze[i][j] = genAndSolve.state.PATH; //fill the center with paths
+                            Maze.maze.maze[i][j] = genAndSolve.state.PATH; //fill the center with paths
                         }
 
                     }
                 }
-                pnlDisplay.removeAll();
-                pnlDisplay.add(g[0], BorderLayout.CENTER);
-                pnlDisplay.revalidate();
-                pnlDisplay.repaint();
-
-
+                if (pnlDisplay.getMouseListeners().length == 1) {
+                    pnlDisplay.removeMouseListener(ml);
+                }
                 if (pnlDisplay.getMouseListeners().length == 0) {
-                    pnlDisplay.addMouseListener(new MouseAdapter() {
+                    ml = (new MouseAdapter() {
                         public void mouseClicked(MouseEvent c) {
+
                             if (editable) { //check if the maze is editable
                                 pnlDisplay.removeAll();
                                 int coordX = c.getX() / size; //get the x coordinate of the mouse
                                 int coordY = c.getY() / size; //get the y coordinate of the mouse
-//                                System.out.println(coordX + ", " + coordY + " " + String.valueOf(Maze.maze.maze[coordX][coordY]));
-//                                System.out.println(pnlDisplay.getMouseListeners().length);
-                                if (String.valueOf(genAndSolve.maze[coordX][coordY]) == "WALL" && coordX != 0 && coordY != 0 && coordX < maxWidthCoord - 1 && coordY < maxHeightCoord - 1) {
-                                    genAndSolve.maze[coordX][coordY] = genAndSolve.state.PATH;
-                                } else if (String.valueOf(genAndSolve.maze[coordX][coordY]) == "PATH" && coordX < maxWidthCoord - 1 && coordY < maxHeightCoord - 1) {
-                                    genAndSolve.maze[coordX][coordY] = genAndSolve.state.WALL;
+
+                                if (String.valueOf(Maze.maze.maze[coordX][coordY]) == "WALL" && coordX != 0 && coordY != 0 && coordX < maxWidthCoord - 1 && coordY < maxHeightCoord - 1) {
+                                    Maze.maze.maze[coordX][coordY] = genAndSolve.state.PATH;
+                                }
+                                else if (String.valueOf(Maze.maze.maze[coordX][coordY]) == "PATH" && coordX < maxWidthCoord - 1 && coordY < maxHeightCoord - 1) {
+                                    Maze.maze.maze[coordX][coordY] = genAndSolve.state.WALL;
                                 }
                                 pnlDisplay.removeAll();
                                 pnlDisplay.add(g[0], BorderLayout.CENTER);
                                 pnlDisplay.revalidate();
                                 pnlDisplay.repaint();
                             }
-//                                else if (String.valueOf(g[0].maze.maze[coordX][coordY]) == "PATH" && coordX < maxWidthCoord - 1 && coordY < maxHeightCoord - 1  && genTest) {
-//                                    g[0].maze.maze[coordX][coordY] = genAndSolve.state.PATH;
-//                                }
+                            pnlDisplay.removeAll();
+                            pnlDisplay.add(g[0], BorderLayout.CENTER);
+                            pnlDisplay.revalidate();
+                            pnlDisplay.repaint();
                         }
-
                     });
+                    pnlDisplay.addMouseListener(ml);
                 }
-
-                //on space - reset
+                pnlDisplay.revalidate();
+                pnlDisplay.repaint();
             }
 
         } else if (src == autoGen) {
@@ -268,8 +268,8 @@ public class UserGUI extends JFrame implements ActionListener, Runnable {
 
                 pnlDisplay.revalidate();
                 pnlDisplay.repaint();
-                int maxWidthCoord = genAndSolve.maze.length;
-                int maxHeightCoord = genAndSolve.maze[0].length;
+                int maxWidthCoord = Maze.maze.maze.length;
+                int maxHeightCoord = Maze.maze.maze[0].length;
                 if (pnlDisplay.getMouseListeners().length == 0) {
                     pnlDisplay.addMouseListener(new MouseAdapter() {
                         public void mouseClicked(MouseEvent c) {
@@ -279,10 +279,10 @@ public class UserGUI extends JFrame implements ActionListener, Runnable {
                                 int coordY = c.getY() / size; //get the y coordinate of the mouse
 //                                System.out.println(coordX + ", " + coordY + " " + String.valueOf(Maze.maze.maze[coordX][coordY]));
 //                                System.out.println(pnlDisplay.getMouseListeners().length);
-                                if (String.valueOf(genAndSolve.maze[coordX][coordY]) == "WALL" && coordX != 0 && coordY != 0 && coordX < maxWidthCoord - 1 && coordY < maxHeightCoord - 1) {
-                                    genAndSolve.maze[coordX][coordY] = genAndSolve.state.PATH;
-                                } else if (String.valueOf(genAndSolve.maze[coordX][coordY]) == "PATH" && coordX < maxWidthCoord - 1 && coordY < maxHeightCoord - 1) {
-                                    genAndSolve.maze[coordX][coordY] = genAndSolve.state.WALL;
+                                if (String.valueOf(Maze.maze.maze[coordX][coordY]) == "WALL" && coordX != 0 && coordY != 0 && coordX < maxWidthCoord - 1 && coordY < maxHeightCoord - 1) {
+                                    Maze.maze.maze[coordX][coordY] = genAndSolve.state.PATH;
+                                } else if (String.valueOf(Maze.maze.maze[coordX][coordY]) == "PATH" && coordX < maxWidthCoord - 1 && coordY < maxHeightCoord - 1) {
+                                    Maze.maze.maze[coordX][coordY] = genAndSolve.state.WALL;
                                 }
                                 pnlDisplay.removeAll();
                                 pnlDisplay.add(g[0], BorderLayout.CENTER);
@@ -292,6 +292,10 @@ public class UserGUI extends JFrame implements ActionListener, Runnable {
 //                                else if (String.valueOf(g[0].maze.maze[coordX][coordY]) == "PATH" && coordX < maxWidthCoord - 1 && coordY < maxHeightCoord - 1  && genTest) {
 //                                    g[0].maze.maze[coordX][coordY] = genAndSolve.state.PATH;
 //                                }
+                            pnlDisplay.removeAll();
+                            pnlDisplay.add(g[0], BorderLayout.CENTER);
+                            pnlDisplay.revalidate();
+                            pnlDisplay.repaint();
                         }
 
                     });
@@ -301,7 +305,7 @@ public class UserGUI extends JFrame implements ActionListener, Runnable {
             isLogo = true;
             genAndSolve.logo = (imageInsert.addImage(0));
 
-            if (UserGUI.size != 0 && !isFromDB) {
+            if (UserGUI.size != 0) {
                 if (!isManual){
                     loadMaze(false);
                 }
@@ -311,7 +315,7 @@ public class UserGUI extends JFrame implements ActionListener, Runnable {
             }
         } else if (src == mazeAdd) {
             imageInsert.addImage(1);
-            if (UserGUI.size != 0 && !isFromDB) {
+            if (UserGUI.size != 0) {
                 if (!isManual){
                     loadMaze(false);
                 }
@@ -321,7 +325,7 @@ public class UserGUI extends JFrame implements ActionListener, Runnable {
             }
         } else if (src == imageRemove) {
             imageInsert.removeImage();
-            if (UserGUI.size != 0 && !isFromDB) {
+            if (UserGUI.size != 0) {
                 if (!isManual){
                     loadMaze(false);
                 }
@@ -345,20 +349,17 @@ public class UserGUI extends JFrame implements ActionListener, Runnable {
             int result = JOptionPane.showConfirmDialog(
                     null, myPanel, "Save Current Maze?", JOptionPane.OK_CANCEL_OPTION);
             if (result == JOptionPane.OK_OPTION) {
-                if (title.getText().length() > 0 && author.getText().length() > 0 && validateName(title.getText())) {
+                if (title.getText().length() > 0 && author.getText().length() > 0 && !databaseStorage.retrieveTitles().contains(title.getText()) && validateName(title.getText())) {
                     createScreenshot(title.getText());
                     try {
-                        if (databaseStorage.retrieveTitles().contains(title.getText())) {
-                            databaseStorage.updateMaze(title.getText(), Save());
-                        }
-                        else {
-                            databaseStorage.insertMaze(title.getText(), author.getText(), Save());
-                        }
+                        databaseStorage.insertMaze(title.getText(), author.getText(), Save());
                     } catch (SQLException | FileNotFoundException ex) {
                         ex.printStackTrace();
                     }
                 } else if (currentMaze == null) {
                     JOptionPane.showMessageDialog(null, "No currently generated maze", "Error", JOptionPane.INFORMATION_MESSAGE);
+                } else if (databaseStorage.retrieveTitles().contains(title.getText())) {
+                    JOptionPane.showMessageDialog(null, "Title already used in database", "Error", JOptionPane.INFORMATION_MESSAGE);
                 } else if (!validateName(title.getText())) {
                     JOptionPane.showMessageDialog(null, "Invalid Title", "Error", JOptionPane.INFORMATION_MESSAGE);
                 } else {
@@ -374,22 +375,16 @@ public class UserGUI extends JFrame implements ActionListener, Runnable {
                 }
             }
         } else if (src == mazeSolutions) {
-            boolean savedSolution = false;
-            if ((isFromDB && !genAndSolve.genSolutions)) {
-                int maxWidthCoord = genAndSolve.maze.length;
-                int maxHeightCoord = genAndSolve.maze[0].length;
-                for (int i = 0; i < maxWidthCoord; i++) { //x coordinate
-                    for (int j = 0; j < maxHeightCoord; j++) { //y coordinate
-                        if (Objects.equals(String.valueOf(genAndSolve.maze[i][j]), "SOLUTION")) {
-                            savedSolution = true;
-                        }
-                    }
+            genAndSolve.genSolutions = !genAndSolve.genSolutions;
+            if (size != 0) {
+                if (isFromDB) {
+                    loadMaze(true);
+                }
+                else{
+                    reload(Save());
                 }
             }
-            genAndSolve.genSolutions = !genAndSolve.genSolutions;
-            if (size != 0 && !savedSolution) {
-                reload(Save());
-            }
+
         } else if (src == setEditable) {
             editable = !editable;
         }
@@ -464,26 +459,25 @@ public class UserGUI extends JFrame implements ActionListener, Runnable {
     public static void loadMaze(Boolean fromDB){
         if (fromDB) {
             size = databaseGUI.returnSize();
-
-        }
-        final Rectangle[] r = {pnlDisplay.getBounds()};
-        final Maze[] g = {new Maze(r[0].width, r[0].height)};
-        if (fromDB) {
+            final Rectangle[] r = {pnlDisplay.getBounds()};
+            final Maze[] g = {new Maze(r[0].width, r[0].height)};
             pnlDisplay.removeAll();
             pnlDisplay.add(g[0], BorderLayout.CENTER);
             pnlDisplay.setVisible(true);
             currentMaze = g[0];
             Integer n = 0;
-            int maxWidthCoord = genAndSolve.maze.length;
-            int maxHeightCoord = genAndSolve.maze[0].length;
+            int maxWidthCoord = Maze.maze.maze.length;
+            int maxHeightCoord = Maze.maze.maze[0].length;
             for (int i = 0; i < maxWidthCoord; i++) { //x coordinate
                 for (int j = 0; j < maxHeightCoord; j++) { //y coordinate
-                    genAndSolve.maze[i][j] = genAndSolve.state.valueOf(retrievedDirections.get(n));
+                    Maze.maze.maze[i][j] = genAndSolve.state.valueOf(retrievedDirections.get(n)); //place walls around the border
                     n++;
                 }
             }
         }
         else{
+            final Rectangle[] r = {pnlDisplay.getBounds()};
+            final Maze[] g = {new Maze(r[0].width, r[0].height)};
             r[0] = pnlDisplay.getBounds();
             g[0] = new Maze(r[0].width, r[0].height);
             currentMaze = g[0];
@@ -491,38 +485,6 @@ public class UserGUI extends JFrame implements ActionListener, Runnable {
         }
         pnlDisplay.revalidate();
         pnlDisplay.repaint();
-        int maxWidthCoord = genAndSolve.maze.length;
-        int maxHeightCoord = genAndSolve.maze[0].length;
-        if (pnlDisplay.getMouseListeners().length == 0) {
-            pnlDisplay.addMouseListener(new MouseAdapter() {
-                public void mouseClicked(MouseEvent c) {
-                    if (editable) { //check if the maze is editable
-                        pnlDisplay.removeAll();
-                        int coordX = c.getX() / size; //get the x coordinate of the mouse
-                        int coordY = c.getY() / size; //get the y coordinate of the mouse
-//                                System.out.println(coordX + ", " + coordY + " " + String.valueOf(Maze.maze.maze[coordX][coordY]));
-//                                System.out.println(pnlDisplay.getMouseListeners().length);
-                        if (String.valueOf(genAndSolve.maze[coordX][coordY]) == "WALL" && coordX != 0 && coordY != 0 && coordX < maxWidthCoord - 1 && coordY < maxHeightCoord - 1) {
-                            genAndSolve.maze[coordX][coordY] = genAndSolve.state.PATH;
-                        } else if (String.valueOf(genAndSolve.maze[coordX][coordY]) == "PATH" && coordX < maxWidthCoord - 1 && coordY < maxHeightCoord - 1) {
-                            genAndSolve.maze[coordX][coordY] = genAndSolve.state.WALL;
-                        }
-                        pnlDisplay.removeAll();
-                        pnlDisplay.add(g[0], BorderLayout.CENTER);
-                        pnlDisplay.revalidate();
-                        pnlDisplay.repaint();
-                    }
-//                                else if (String.valueOf(g[0].maze.maze[coordX][coordY]) == "PATH" && coordX < maxWidthCoord - 1 && coordY < maxHeightCoord - 1  && genTest) {
-//                                    g[0].maze.maze[coordX][coordY] = genAndSolve.state.PATH;
-//                                }
-                    pnlDisplay.removeAll();
-                    pnlDisplay.add(g[0], BorderLayout.CENTER);
-                    pnlDisplay.revalidate();
-                    pnlDisplay.repaint();
-                }
-
-            });
-        }
     }
 
     public void createScreenshot(String title){
