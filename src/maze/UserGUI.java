@@ -424,7 +424,7 @@ public class UserGUI extends JFrame implements ActionListener, Runnable {
                     // == wall
 //                    if ((1<i && i<h) && (1<j && j<w)) {
                     if ((i != 0 && i < w - 1) && (j != 0 && j < h - 1)) {
-                        if (String.valueOf(genAndSolve.maze[i][j]) != "WALL" && !(i==1 && j==1)) {
+                        if (String.valueOf(genAndSolve.maze[i][j]) != "WALL" && !(i==1 && j==1) && !(i==w-2 && j==h-2)) {
                             if (
                                     ((String.valueOf(genAndSolve.maze[i][j - 1]) == "WALL") && (String.valueOf(genAndSolve.maze[i + 1][j]) == "WALL") && (String.valueOf(genAndSolve.maze[i - 1][j]) == "WALL"))
                                             || ((String.valueOf(genAndSolve.maze[i][j - 1]) == "WALL") && (String.valueOf(genAndSolve.maze[i + 1][j]) == "WALL") && (String.valueOf(genAndSolve.maze[i][j + 1]) == "WALL"))
