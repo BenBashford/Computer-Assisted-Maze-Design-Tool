@@ -39,7 +39,6 @@ public class genAndSolve {
     // start and end of maze
     private Point start;
     private Point end;
-//    public int p;
 
     private static int ranX;
     private static int ranY;
@@ -47,7 +46,6 @@ public class genAndSolve {
 
     public genAndSolve(int width, int height, int size) {
         imgSize = 0;
-//        p = 0;
         size = Math.abs(size);
         columns = Math.abs(width) / size;
         rows = Math.abs(height) / size;

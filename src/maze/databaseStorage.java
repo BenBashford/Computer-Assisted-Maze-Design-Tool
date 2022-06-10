@@ -20,8 +20,6 @@ public class databaseStorage {
     public static InputStream tempStart;
     public static InputStream tempEnd;
 
-    public static ArrayList<Point> test = new ArrayList<>();
-
     public static void createNewDatabase(String fileName) throws IOException {
         Properties props = new Properties();
         FileInputStream in = null;
