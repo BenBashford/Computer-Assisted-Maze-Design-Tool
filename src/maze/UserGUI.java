@@ -37,7 +37,7 @@ public class UserGUI extends JFrame implements ActionListener, Runnable {
     private JMenuItem open;
     private JToggleButton mazeSolutions;
     private JToggleButton setEditable;
-    private JToggleButton difficulty;
+    private JButton difficulty;
     public static int size;
     public static boolean isManual;
     public static MouseListener ml = null;
@@ -80,7 +80,7 @@ public class UserGUI extends JFrame implements ActionListener, Runnable {
         saveOpen = createJMenu("Save/Open");
         mazeSolutions = createToggleButton("Generate With Solution");
         setEditable = createToggleButton("Enable Manual Maze Editing");
-        difficulty = createToggleButton("Difficulty");
+        difficulty = createButton("Difficulty");
         top.add(manual);
         top.add(auto);
         top.add(imgSelect);
@@ -115,6 +115,14 @@ public class UserGUI extends JFrame implements ActionListener, Runnable {
     private JPanel createPanel(Color c) {
         JPanel temp = new JPanel();
         temp.setBackground(c);
+        return temp;
+    }
+
+    private JButton createButton(String str){
+        JButton temp = new JButton();
+        temp.setFocusable(false);
+        temp.setText(str);
+        temp.addActionListener(this);
         return temp;
     }
 
@@ -397,33 +405,40 @@ public class UserGUI extends JFrame implements ActionListener, Runnable {
         } else if (src == setEditable) {
             editable = !editable;
         } else if (src == difficulty) {
-            int h = genAndSolve.maze[0].length;
             int w = genAndSolve.maze.length;
+            int h = genAndSolve.maze[0].length;
             int counterPath = 0;
+            int counterSolution = 0;
             int counterCorner = 0;
             for (int i = 0; i < w; i++) { // x
                 for (int j = 0; j < h; j++) { // y
                     if (String.valueOf(genAndSolve.maze[i][j]) == "SOLUTION") {
+                        counterSolution++;
+                    }
+                    if (String.valueOf(genAndSolve.maze[i][j]) == "PATH" || String.valueOf(genAndSolve.maze[i][j]) == "PLACEHOLDER") {
                         counterPath++;
                     }
                     // defined by if
                     // above or below and
                     // left or right
                     // == wall
-
-                    if ((1<i && i<h) && (1<j && j<w)) {
-                        if (
-                                ((String.valueOf(genAndSolve.maze[i][j-1]) == "WALL") && (String.valueOf(genAndSolve.maze[i+1][j]) == "WALL") && (String.valueOf(genAndSolve.maze[i-1][j]) == "WALL"))
-                                || ((String.valueOf(genAndSolve.maze[i+1][j]) == "WALL") && (String.valueOf(genAndSolve.maze[i][j-1]) == "WALL") && (String.valueOf(genAndSolve.maze[i-1][j]) == "WALL"))
-                                || ((String.valueOf(genAndSolve.maze[i-1][j]) == "WALL") && (String.valueOf(genAndSolve.maze[i+1][j]) == "WALL") && (String.valueOf(genAndSolve.maze[i][j-1]) == "WALL"))
-                        ) {
-                            counterCorner++;
+//                    if ((1<i && i<h) && (1<j && j<w)) {
+                    if ((i != 0 && i < w - 1) && (j != 0 && j < h - 1)) {
+                        if (String.valueOf(genAndSolve.maze[i][j]) != "WALL" && !(i==1 && j==1)) {
+                            if (
+                                    ((String.valueOf(genAndSolve.maze[i][j - 1]) == "WALL") && (String.valueOf(genAndSolve.maze[i + 1][j]) == "WALL") && (String.valueOf(genAndSolve.maze[i - 1][j]) == "WALL"))
+                                            || ((String.valueOf(genAndSolve.maze[i][j - 1]) == "WALL") && (String.valueOf(genAndSolve.maze[i + 1][j]) == "WALL") && (String.valueOf(genAndSolve.maze[i][j + 1]) == "WALL"))
+                                            || ((String.valueOf(genAndSolve.maze[i - 1][j]) == "WALL") && (String.valueOf(genAndSolve.maze[i + 1][j]) == "WALL") && (String.valueOf(genAndSolve.maze[i][j + 1]) == "WALL"))
+                                            || ((String.valueOf(genAndSolve.maze[i - 1][j]) == "WALL") && (String.valueOf(genAndSolve.maze[i][j - 1]) == "WALL") && (String.valueOf(genAndSolve.maze[i][j + 1]) == "WALL"))
+                            ) {
+                                counterCorner++;
+                            }
                         }
                     }
                 }
             }
 
-            double percentCells = (counterPath * 100)/(w * h);
+            double percentCells = (counterSolution*100/(counterPath+counterSolution));
 
             String string = String.format("There are %d dead ends \n The solution is %.1f percent of the maze", counterCorner, percentCells);
             //String string = String.format("There a %d corner cells  The solution is %f % of the maze  The solution difficulty is %s", counterCorner, percentCells);

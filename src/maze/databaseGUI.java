@@ -90,6 +90,7 @@ public class databaseGUI extends JFrame implements ActionListener, Runnable {
         pnlDisplay.add(pane);
         JMenuBar top = new JMenuBar();
         JButton open = new JButton("Open Selected");
+        open.setFocusable(false);
         open.addActionListener(this);
         top.add(open);
         getContentPane().add(pnlDisplay, BorderLayout.CENTER);
