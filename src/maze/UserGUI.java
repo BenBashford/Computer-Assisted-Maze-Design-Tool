@@ -425,11 +425,13 @@ public class UserGUI extends JFrame implements ActionListener, Runnable {
 
             double percentCells = (counterPath * 100)/(w * h);
 
-            String string = String.format("There a %d corner cells \n The solution is %.1f% of the maze", counterCorner, percentCells);
+            String string = String.format("There are %d dead ends \n The solution is %.1f percent of the maze", counterCorner, percentCells);
             //String string = String.format("There a %d corner cells  The solution is %f % of the maze  The solution difficulty is %s", counterCorner, percentCells);
 
             //JOptionPane.showMessageDialog(null, string);
             //System.out.print(string);
+            
+            JOptionPane.showMessageDialog(null, string, "Maze Difficulty", JOptionPane.PLAIN_MESSAGE);
 
             //JOptionPane.showMessageDialog(null, string, "Maze Difficulty", JOptionPane.PLAIN_MESSAGE);
         }
